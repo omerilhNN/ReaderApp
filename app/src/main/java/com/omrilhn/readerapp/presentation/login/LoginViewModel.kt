@@ -13,6 +13,9 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel() {
     private val _emailTextState = MutableStateFlow(StandardTextFieldState())
     val emailTextState: StateFlow<StandardTextFieldState> = _emailTextState
+    /* EMAIL TEXT before using State
+     private val _emailText = MutableStateFlow<String>("")
+    val emailTextState: StateFlow<String> get() = _emailText*/
 
     private val _passwordText = MutableStateFlow<String>("")
     val passwordText : StateFlow<String> get() = _passwordText
@@ -22,6 +25,8 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         _emailTextState.update {currentState-> //Also use StateFlow's update method
             currentState.copy(text = email)
         }
+
+        //  _emailText.value = email -> before using STATE for changing value
     }
     fun setPasswordText(password:String){
         _passwordText.value = password
