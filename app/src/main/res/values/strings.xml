@@ -3,4 +3,6 @@
     <string name="showPassword">Show password\n</string>
     <string name="hidePassword">Hide password</string>
     <string name="email">Enter your E-mail\n</string>
+    <string name="password">Enter your password\n</string>
+    <string name="create_acct">Sign up</string>
 </resources>

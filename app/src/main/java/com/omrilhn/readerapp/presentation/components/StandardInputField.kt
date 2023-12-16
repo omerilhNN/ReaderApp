@@ -2,6 +2,7 @@ package com.omrilhn.readerapp.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.omrilhn.readerapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +40,7 @@ fun StandardInputField(
     text: String = "",
     hint:String = "",
     error:String = "",
-    style:TextStyle = TextStyle(
+    style:TextStyle = TextStyle(fontSize = 18.sp,
         color = MaterialTheme.colorScheme.onBackground
     ),
     leadingIcon:ImageVector?=null,
@@ -59,6 +61,7 @@ fun StandardInputField(
         .then(modifier)){
         OutlinedTextField(
             value = text,
+            label = {Text(text = hint)},
             onValueChange = {
                 //if Input length is lesser maxLength then change the value
                 if(it.length <= maxLength){
@@ -73,7 +76,8 @@ fun StandardInputField(
             },
             isError = error != "",
             keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType
+                keyboardType = keyboardType,
+                imeAction = imeAction
             ),
             visualTransformation = if(isPasswordToggleDisplayed && !isPasswordVisible){
                 PasswordVisualTransformation()
@@ -116,8 +120,10 @@ fun StandardInputField(
                 icon
             }else null,
             modifier = Modifier
+                .padding(start = 10.dp,bottom = 10.dp,end = 10.dp)
                 .fillMaxWidth()
-                .focusRequester(focusRequester)
+                .focusRequester(focusRequester),
+            keyboardActions = onAction
             )
         if(error.isNotEmpty()){
             Text(
