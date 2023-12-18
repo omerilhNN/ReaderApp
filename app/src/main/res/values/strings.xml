@@ -4,5 +4,8 @@
     <string name="hidePassword">Hide password</string>
     <string name="email">Enter your E-mail\n</string>
     <string name="password">Enter your password\n</string>
-    <string name="create_acct">Sign up</string>
+    <string name="signUp">Sign up</string>
+    <string name="dont_have_an_account_yet">Don\'t have an account yet?</string>
+    <string name="already_have_an_account">Already have an existing account?</string>
+    <string name="login">Login</string>
 </resources>

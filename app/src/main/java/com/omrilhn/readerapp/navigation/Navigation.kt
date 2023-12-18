@@ -23,8 +23,8 @@ import com.omrilhn.readerapp.presentation.update.UpdateScreen
 @Composable
 fun Navigation(
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState,
-    imageLoader: ImageLoader
+    snackbarHostState: SnackbarHostState
+//    imageLoader: ImageLoader
 ){
     NavHost(
         navController = navController,

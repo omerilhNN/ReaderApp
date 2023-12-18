@@ -1,26 +1,35 @@
 package com.omrilhn.readerapp.presentation.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -42,10 +51,11 @@ fun LoginScreen(
 {
     val emailText = loginViewModel.emailTextState.collectAsState()
     val passwordText = loginViewModel.passwordTextState.collectAsState()
-//    val valid = remember(emailText.value.text, passwordText.value.text) {
-//        emailText.value.text.trim().isNotEmpty() && passwordText.value.text.trim().isNotEmpty()}
+    val isValid = loginViewModel.validInput.value //Email-Password inputs isValid?
     val state = loginViewModel.loginState.value
     val context = LocalContext.current
+
+    val showLoginForm = rememberSaveable{ mutableStateOf(true)}
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -53,7 +63,7 @@ fun LoginScreen(
             start = SpaceLarge,
             end = SpaceLarge,
             top = SpaceLarge,
-            bottom = 50.dp
+            bottom = 20.dp
         )){
         Column (verticalArrangement = Arrangement.Center,
             modifier = Modifier
@@ -66,19 +76,76 @@ fun LoginScreen(
                 Image(painter = painterResource(id = R.drawable.booklogo),
                     contentDescription = "Book logo",
                     modifier = Modifier
-                        .height(150.dp)
-                        .width(150.dp))
+                        .align(Alignment.CenterHorizontally)
+                        .height(100.dp)
+                        .width(100.dp),
+                    )
 //            }
-            if (isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
-                modifier = Modifier.padding(4.dp)) else Text("")
             Spacer(modifier = Modifier.height(SpaceMedium))
 
-          UserForm(loading = false,isCreateAccount = true){email,password->
-              //onDone function which has given as parameter to UserForm composable
+            if(showLoginForm.value) UserForm(loading = false,isCreateAccount = false){email,password->
+                //TODO: Firebase login process -> in loginScreen
 
-          }
+            }else{
+                UserForm(loading = false,isCreateAccount = true){email,password->
+                    //TODO: Firebase creating account process -> in RegisterScreen
+                }
+            }
+            Spacer(modifier = Modifier.height(15.dp))
 
+            Row(modifier = Modifier.padding(15.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Bottom){
+                if(showLoginForm.value){
+                    Text(
+                        text = buildAnnotatedString {
+                            append(stringResource(id = R.string.dont_have_an_account_yet))
+                            append(" ")
+                            val signUpText = stringResource(id = R.string.signUp)
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                append(signUpText)
+                            }
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .clickable {
+                                showLoginForm.value = !showLoginForm.value
+                            }
+                    )
+                }else {
+                    Text(
+                        text = buildAnnotatedString {
+                            append(stringResource(id = R.string.already_have_an_account))
+                            append(" ")
+                            val loginText = stringResource(id = R.string.login)
+                            withStyle(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            ){
+                                append(loginText)
+                            }
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .clickable {
+                                showLoginForm.value = !showLoginForm.value
+                            }
+                    )
+
+                }
+
+
+            }
         }
+
+
+
+
     }
 
 

@@ -39,6 +39,7 @@ fun StandardInputField(
     modifier:Modifier = Modifier,
     enabled: Boolean = true,
     text: String = "",
+    label:String = "",
     hint:String = "",
     error:String = "",
     style:TextStyle = TextStyle(fontSize = 18.sp,
@@ -62,7 +63,7 @@ fun StandardInputField(
         .then(modifier)){
         OutlinedTextField(
             value = text,
-            label = {Text(text = hint)},
+            label = {Text(text = label)},
             onValueChange = {
                 //if Input length is lesser maxLength then change the value
                 if(it.length <= maxLength){

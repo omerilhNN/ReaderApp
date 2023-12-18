@@ -7,15 +7,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -58,11 +54,12 @@ fun UserForm(
 
     Column(modifier,
         horizontalAlignment = Alignment.CenterHorizontally) {
-        if (isCreateAccount) Text(text = stringResource(id = R.string.create_acct),
+        if (isCreateAccount) Text(text = stringResource(id = R.string.signUp),
             modifier = Modifier.padding(4.dp)) else Text("")
 
         StandardInputField(
             text = emailTextState.value.text ,
+            label = "E-mail",
             hint = stringResource(id = R.string.email),
             enabled = !loading,
             onValueChange ={
@@ -80,6 +77,7 @@ fun UserForm(
             modifier = Modifier.focusRequester(passwordFocusRequest),
             enabled = !loading,
             text = passwordTextState.value.text,
+            label = "Password",
             hint = stringResource(id = R.string.password),
             onValueChange ={
                 viewModel.onEvent(LoginEvent.EnteredPassword(it))},
