@@ -37,6 +37,7 @@ import com.omrilhn.readerapp.R
 @Composable
 fun StandardInputField(
     modifier:Modifier = Modifier,
+    enabled: Boolean = true,
     text: String = "",
     hint:String = "",
     error:String = "",

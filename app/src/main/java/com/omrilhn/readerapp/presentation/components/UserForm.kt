@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omrilhn.readerapp.R
+import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
 import com.omrilhn.readerapp.ui.theme.SpaceMedium
 
@@ -37,18 +39,17 @@ import com.omrilhn.readerapp.ui.theme.SpaceMedium
 fun UserForm(
     loading: Boolean = false,
     isCreateAccount: Boolean = false,
+    passwordFocusRequest: FocusRequester = FocusRequester.Default,
+
     viewModel: LoginViewModel = hiltViewModel(),
     onDone: (String, String) -> Unit = { email, pwd ->}
 ) {
     val emailTextState = viewModel.emailTextState.collectAsState()
     val passwordTextState = viewModel.passwordTextState.collectAsState()
+    val state = viewModel.loginState.value
 
-    val passwordVisibility = rememberSaveable { mutableStateOf(false) }
-    val passwordFocusRequest = FocusRequester.Default
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val valid = remember(emailTextState.value.text, passwordTextState.value.text) {
-        viewModel.emailTextState.value.text.trim().isNotEmpty() && viewModel.passwordTextState.value.text.trim().isNotEmpty()
-    }
+     val keyboardController = LocalSoftwareKeyboardController.current
+//    val passwordVisibility = rememberSaveable { mutableStateOf(false) }
     val modifier = Modifier
         .height(250.dp)
         .background(MaterialTheme.colorScheme.background)
@@ -63,8 +64,9 @@ fun UserForm(
         StandardInputField(
             text = emailTextState.value.text ,
             hint = stringResource(id = R.string.email),
+            enabled = !loading,
             onValueChange ={
-                viewModel.setEmailText(it)
+                viewModel.onEvent(LoginEvent.EnteredEmail(it))
             },
             onAction = KeyboardActions{
                 passwordFocusRequest.requestFocus()},
@@ -76,22 +78,34 @@ fun UserForm(
         
         StandardInputField(
             modifier = Modifier.focusRequester(passwordFocusRequest),
+            enabled = !loading,
             text = passwordTextState.value.text,
             hint = stringResource(id = R.string.password),
             onValueChange ={
-                viewModel.setPasswordText(it)},
+                viewModel.onEvent(LoginEvent.EnteredPassword(it))},
             keyboardType = KeyboardType.Password,
             error = viewModel.passwordError.value,
             onAction = KeyboardActions{
-                if(!valid) return@KeyboardActions
+                if(!viewModel.validInput.value) return@KeyboardActions
                 onDone(emailTextState.value.text.trim(),passwordTextState.value.text.trim())
             },
             imeAction = ImeAction.Done,
             isSingleLine = true,
-            isPasswordVisible = passwordVisibility.value,
+            isPasswordVisible = state.isPasswordVisible,
+            onPasswordToggleClick = {
+                viewModel.onEvent(LoginEvent.TogglePasswordVisibility)},
             style = TextStyle(fontSize = 18.sp,color = MaterialTheme.colorScheme.onBackground),
 
             )
+        
+        SubmitButton(
+            textId =if(isCreateAccount) "Create account" else "Login",
+            loading = loading,
+            validInputs = viewModel.validInput.value)
+        {
+            onDone(emailTextState.value.text.trim(),passwordTextState.value.text.trim())
+            keyboardController?.hide() //If keyboardController is not null do
+        }
 
     }
 

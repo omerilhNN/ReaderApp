@@ -2,6 +2,7 @@ package com.omrilhn.readerapp.presentation.login
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omrilhn.readerapp.core.domain.states.PasswordTextFieldState
@@ -36,6 +37,10 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
     private val _loginState = mutableStateOf(LoginState())
     val loginState: State<LoginState> = _loginState
+
+    private val _validInput = mutableStateOf(
+        emailTextState.value.text.trim().isNotEmpty() && passwordTextState.value.text.trim().isNotEmpty())
+    val validInput: State<Boolean> = _validInput
 
 //    fun setEmailText(email:String){
 //        //StateFlows -> update Property
@@ -77,7 +82,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             is LoginEvent.Login -> {
                 viewModelScope.launch {
                     _loginState.value = loginState.value.copy(isLoading = true)
-                    
+
                 }
 
             }
