@@ -1,22 +1,32 @@
 package com.omrilhn.readerapp.presentation.login
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.omrilhn.readerapp.data.repository.AuthRepository
 import com.omrilhn.readerapp.core.domain.states.PasswordTextFieldState
 import com.omrilhn.readerapp.core.domain.states.StandardTextFieldState
-import com.omrilhn.readerapp.data.repository.LoginRepository
+import com.omrilhn.readerapp.core.domain.use_case.LoginUseCase
+import com.omrilhn.readerapp.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel @Inject constructor(private val authRepository: AuthRepository,
+                                         private val loginUseCase: LoginUseCase) : ViewModel() {
+    private val auth: FirebaseAuth = Firebase.auth
+
     private val _emailTextState = MutableStateFlow(StandardTextFieldState())
     val emailTextState: StateFlow<StandardTextFieldState> = _emailTextState
     /* EMAIL TEXT before using State
@@ -35,8 +45,11 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     private val _passwordError = mutableStateOf("")
     val passwordError: State<String> = _passwordError
 
-    private val _loginState = mutableStateOf(LoginState())
-    val loginState: State<LoginState> = _loginState
+    private val _loginState = MutableStateFlow(LoginState())
+    val loginState: StateFlow<LoginState> = _loginState
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private val _validInput = mutableStateOf(
         emailTextState.value.text.trim().isNotEmpty() && passwordTextState.value.text.trim().isNotEmpty())
@@ -56,13 +69,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 //            currentState.copy(text = password)
 //        }
 //    }
-    fun setIsEmailError(error:String){
-        _emailError.value = error
-    }
-    fun setIsPasswordError(error:String){
-        _passwordError.value = error
-    }
-    fun onEvent(event:LoginEvent){
+    fun onEvent(event:LoginEvent,home: (() -> Unit) ?= null){
         when(event){
             is LoginEvent.EnteredEmail -> {
                 _emailTextState.update { currentState -> //Also use StateFlow's update method
@@ -82,11 +89,51 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             is LoginEvent.Login -> {
                 viewModelScope.launch {
                     _loginState.value = loginState.value.copy(isLoading = true)
+                    signInWithEmailAndPassword(
+                        _emailTextState.value.text,
+                        _passwordTextState.value.text,
+                        home)
+//                    val loginResult = loginUseCase(
+//                        email = emailTextState.value.text,
+//                        password = passwordTextState.value.text
+//                    )
 
+                    _loginState.value = loginState.value.copy(isLoading = false)
+//                    if(loginResult.emailError != null){
+//                       _emailTextState.update {currentState->
+//                           currentState.copy(error = loginResult.emailError)
+//                       }
+//                    }
+//                    if(loginResult.passwordError != null){
+//                        _passwordTextState.update {currentState->
+//                            currentState.copy(error = loginResult.passwordError)
+//                        }
+//                    }
                 }
 
             }
         }
+    }
+    fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit) ?= null){
+        try {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful){
+                        Log.d("FB", "signInWithEmailAndPassword: Yayayay! ${task.result.toString()}")
+                        //Todo: take them home
+                        home?.invoke()// when Home function is not null -> execute
+                    }else {
+                        Log.d("FB", "signInWithEmailAndPassword: ${task.result.toString()}")
+                    }
+
+
+                }
+
+        }catch (ex: Exception){
+            Log.d("FB", "signInWithEmailAndPassword: ${ex.message}")
+        }
+
+
     }
 
 }

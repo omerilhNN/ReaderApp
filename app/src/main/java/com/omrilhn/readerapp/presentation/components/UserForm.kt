@@ -35,16 +35,17 @@ import com.omrilhn.readerapp.ui.theme.SpaceMedium
 fun UserForm(
     loading: Boolean = false,
     isCreateAccount: Boolean = false,
-    passwordFocusRequest: FocusRequester = FocusRequester.Default,
+
 
     viewModel: LoginViewModel = hiltViewModel(),
     onDone: (String, String) -> Unit = { email, pwd ->}
 ) {
     val emailTextState = viewModel.emailTextState.collectAsState()
     val passwordTextState = viewModel.passwordTextState.collectAsState()
-    val state = viewModel.loginState.value
+    val state = viewModel.loginState.collectAsState()
 
-     val keyboardController = LocalSoftwareKeyboardController.current
+    val passwordFocusRequest = FocusRequester.Default
+    val keyboardController = LocalSoftwareKeyboardController.current
 //    val passwordVisibility = rememberSaveable { mutableStateOf(false) }
     val modifier = Modifier
         .height(250.dp)
@@ -66,15 +67,18 @@ fun UserForm(
                 viewModel.onEvent(LoginEvent.EnteredEmail(it))
             },
             onAction = KeyboardActions{
-                passwordFocusRequest.requestFocus()},
+                passwordFocusRequest.requestFocus()
+                keyboardController?.hide()
+                },
             //imeAction = ImeAction.Next, //imeAction has been initialized in StandardInputField Cmpsbl.
             keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next,
             error = viewModel.emailError.value)
 
         Spacer(modifier = Modifier.height(SpaceMedium))
         
         StandardInputField(
-            modifier = Modifier.focusRequester(passwordFocusRequest),
+
             enabled = !loading,
             text = passwordTextState.value.text,
             label = "Password",
@@ -86,13 +90,17 @@ fun UserForm(
             onAction = KeyboardActions{
                 if(!viewModel.validInput.value) return@KeyboardActions
                 onDone(emailTextState.value.text.trim(),passwordTextState.value.text.trim())
+
+                keyboardController?.hide()
+
             },
             imeAction = ImeAction.Done,
             isSingleLine = true,
-            isPasswordVisible = state.isPasswordVisible,
+            isPasswordVisible = state.value.isPasswordVisible,
             onPasswordToggleClick = {
                 viewModel.onEvent(LoginEvent.TogglePasswordVisibility)},
             style = TextStyle(fontSize = 18.sp,color = MaterialTheme.colorScheme.onBackground),
+
 
             )
         

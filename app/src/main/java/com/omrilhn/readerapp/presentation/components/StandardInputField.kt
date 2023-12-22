@@ -54,9 +54,8 @@ fun StandardInputField(
     isPasswordVisible:Boolean = false,
     onPasswordToggleClick: (Boolean) -> Unit = {},
     onValueChange: (String) -> Unit,
-    imeAction: ImeAction = ImeAction.Next,
-    onAction: KeyboardActions = KeyboardActions.Default,
-    focusRequester: FocusRequester = FocusRequester()
+    imeAction: ImeAction = ImeAction.Default,
+    onAction: KeyboardActions = KeyboardActions.Default
 ){
     Column(modifier = modifier
         .fillMaxWidth()
@@ -124,7 +123,7 @@ fun StandardInputField(
             modifier = Modifier
                 .padding(start = 10.dp,bottom = 10.dp,end = 10.dp)
                 .fillMaxWidth()
-                .focusRequester(focusRequester),
+               ,
             keyboardActions = onAction
             )
         if(error.isNotEmpty()){

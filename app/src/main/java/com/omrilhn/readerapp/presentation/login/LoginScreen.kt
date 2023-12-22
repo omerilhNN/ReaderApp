@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omrilhn.readerapp.R
+import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.StandardInputField
 import com.omrilhn.readerapp.presentation.components.UserForm
 import com.omrilhn.readerapp.ui.theme.SpaceLarge
@@ -52,7 +53,7 @@ fun LoginScreen(
     val emailText = loginViewModel.emailTextState.collectAsState()
     val passwordText = loginViewModel.passwordTextState.collectAsState()
     val isValid = loginViewModel.validInput.value //Email-Password inputs isValid?
-    val state = loginViewModel.loginState.value
+    val state = loginViewModel.loginState.collectAsState()
     val context = LocalContext.current
 
     val showLoginForm = rememberSaveable{ mutableStateOf(true)}
@@ -83,10 +84,19 @@ fun LoginScreen(
 //            }
             Spacer(modifier = Modifier.height(SpaceMedium))
 
-            if(showLoginForm.value) UserForm(loading = false,isCreateAccount = false){email,password->
+            if(showLoginForm.value) {
+                Text(text = stringResource(id = R.string.create_acct),
+                    modifier = Modifier.padding(4.dp))
+                UserForm(loading = false,isCreateAccount = false){email,password->
                 //TODO: Firebase login process -> in loginScreen
+                    loginViewModel.onEvent(event = LoginEvent.Login){
+                        navController.navigate(Screen.HomeScreen.route)
+                    }
 
-            }else{
+
+            }}
+            else{
+                Text(text = " ")
                 UserForm(loading = false,isCreateAccount = true){email,password->
                     //TODO: Firebase creating account process -> in RegisterScreen
                 }

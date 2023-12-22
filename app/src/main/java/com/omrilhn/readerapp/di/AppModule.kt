@@ -21,4 +21,5 @@ object AppModule {
             }
             .build()
     }
+
 }
