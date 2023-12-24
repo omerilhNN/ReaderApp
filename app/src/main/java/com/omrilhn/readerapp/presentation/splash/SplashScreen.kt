@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.omrilhn.readerapp.R
 import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.ui.theme.SpaceLarge
@@ -58,7 +59,11 @@ fun SplashScreen(
             )
             delay(Constants.SPLASH_SCREEN_DURATION)
             navController.popBackStack()
-            navController.navigate(Screen.LoginScreen.route)
+            if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+                navController.navigate(Screen.LoginScreen.route)
+            }else{
+                navController.navigate(Screen.HomeScreen.route)
+            }
         }
     }
 

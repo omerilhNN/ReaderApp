@@ -89,16 +89,16 @@ fun LoginScreen(
                     modifier = Modifier.padding(4.dp))
                 UserForm(loading = false,isCreateAccount = false){email,password->
                 //TODO: Firebase login process -> in loginScreen
-                    loginViewModel.onEvent(event = LoginEvent.Login){
-                        navController.navigate(Screen.HomeScreen.route)
-                    }
-
+                    loginViewModel.onEvent(event = LoginEvent.Login)
 
             }}
             else{
                 Text(text = " ")
                 UserForm(loading = false,isCreateAccount = true){email,password->
-                    //TODO: Firebase creating account process -> in RegisterScreen
+                    loginViewModel.onEvent(event = LoginEvent.Register){
+                        //is Registration success -> navigate to HomeScreen.
+                        navController.navigate(Screen.HomeScreen.route)
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(15.dp))

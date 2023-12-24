@@ -35,10 +35,8 @@ import com.omrilhn.readerapp.ui.theme.SpaceMedium
 fun UserForm(
     loading: Boolean = false,
     isCreateAccount: Boolean = false,
-
-
     viewModel: LoginViewModel = hiltViewModel(),
-    onDone: (String, String) -> Unit = { email, pwd ->}
+    onDone: (String, String) -> Unit? = { email, pwd ->}
 ) {
     val emailTextState = viewModel.emailTextState.collectAsState()
     val passwordTextState = viewModel.passwordTextState.collectAsState()

@@ -1,10 +1,12 @@
 package com.omrilhn.readerapp.presentation.login
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -12,6 +14,7 @@ import com.omrilhn.readerapp.data.repository.AuthRepository
 import com.omrilhn.readerapp.core.domain.states.PasswordTextFieldState
 import com.omrilhn.readerapp.core.domain.states.StandardTextFieldState
 import com.omrilhn.readerapp.core.domain.use_case.LoginUseCase
+import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -69,7 +72,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 //            currentState.copy(text = password)
 //        }
 //    }
-    fun onEvent(event:LoginEvent,home: (() -> Unit) ?= null){
+    fun onEvent(event:LoginEvent,home: (() -> Unit)?=null){
         when(event){
             is LoginEvent.EnteredEmail -> {
                 _emailTextState.update { currentState -> //Also use StateFlow's update method
@@ -92,7 +95,10 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                     signInWithEmailAndPassword(
                         _emailTextState.value.text,
                         _passwordTextState.value.text,
-                        home)
+                     ){
+                       home?.invoke() //If it is not null then execute it .
+
+                    }
 //                    val loginResult = loginUseCase(
 //                        email = emailTextState.value.text,
 //                        password = passwordTextState.value.text
@@ -110,18 +116,29 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 //                        }
 //                    }
                 }
-
+            }
+            is LoginEvent.Register -> {
+                viewModelScope.launch {
+                    createWithEmailAndPassword(
+                        _emailTextState.value.text,
+                        _passwordTextState.value.text
+                    ){
+                        // isRegistration correct -> navigate to HomeScreen
+                        home?.invoke()
+                    }
+                }
             }
         }
     }
-    fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit) ?= null){
+    fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit)?){
         try {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful){
                         Log.d("FB", "signInWithEmailAndPassword: Yayayay! ${task.result.toString()}")
                         //Todo: take them home
-                        home?.invoke()// when Home function is not null -> execute
+                        home?.invoke() // when Home function is not null -> execute
+
                     }else {
                         Log.d("FB", "signInWithEmailAndPassword: ${task.result.toString()}")
                     }
@@ -132,8 +149,31 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
         }catch (ex: Exception){
             Log.d("FB", "signInWithEmailAndPassword: ${ex.message}")
         }
-
-
+    }
+    fun createWithEmailAndPassword(
+        email:String,
+        password:String,
+        home:(() -> Unit)?
+    ){
+        if(!_loginState.value.isLoading){
+            //when LOADING is false update isLoading property by changing it to true
+            _loginState.update {currentState->
+                currentState.copy(isLoading = true)
+            }
+            auth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener { task->
+                    if(task.isSuccessful){
+                        val displayName = task.result?.user?.email?.split('@')?.get(0)
+                        authRepository.createUser(displayName)
+                        home?.invoke()
+                    }else{
+                        Log.d(TAG,"createUserWithEmailAndPassword: ${task.result.toString()}")
+                    }
+                    _loginState.update{currentState->
+                        currentState.copy(isLoading = false)
+                    }
+                }
+        }
     }
 
 }

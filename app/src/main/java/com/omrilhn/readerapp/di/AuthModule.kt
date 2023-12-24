@@ -1,5 +1,6 @@
 package com.omrilhn.readerapp.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.omrilhn.readerapp.core.domain.use_case.LoginUseCase
 import com.omrilhn.readerapp.data.repository.AuthRepository
 import dagger.Module
@@ -21,5 +22,10 @@ object AuthModule {
     @Singleton
     fun provideAuthRepository(): AuthRepository {
         return AuthRepository()
+    }
+    @Provides
+    @Singleton
+    fun provideFirebaseAuthInstance(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 }
