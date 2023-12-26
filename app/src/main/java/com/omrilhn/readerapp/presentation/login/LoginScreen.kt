@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,15 +43,16 @@ import com.omrilhn.readerapp.presentation.components.UserForm
 import com.omrilhn.readerapp.ui.theme.SpaceLarge
 import com.omrilhn.readerapp.ui.theme.SpaceMedium
 import com.omrilhn.readerapp.ui.theme.SpaceSmall
+import com.omrilhn.readerapp.utils.AuthError
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    navController: NavController,
+//    navController: NavController,
     loginViewModel:LoginViewModel = hiltViewModel(),
-    onDone: (String, String) -> Unit = { email, pwd ->},
+    onNavigate:(String) -> Unit = {},
     isCreateAccount:Boolean = false,
-    onLoginClick: ()->Unit)
+    onLoginClick: ()->Unit = {})
 {
     val emailText = loginViewModel.emailTextState.collectAsState()
     val passwordText = loginViewModel.passwordTextState.collectAsState()
@@ -84,79 +88,80 @@ fun LoginScreen(
 //            }
             Spacer(modifier = Modifier.height(SpaceMedium))
 
-            if(showLoginForm.value) {
                 Text(text = stringResource(id = R.string.create_acct),
                     modifier = Modifier.padding(4.dp))
-                UserForm(loading = false,isCreateAccount = false){email,password->
-                //TODO: Firebase login process -> in loginScreen
-                    loginViewModel.onEvent(event = LoginEvent.Login)
+            StandardInputField(
+                text = emailText.value.text,
+                onValueChange = {
+                    loginViewModel.onEvent(LoginEvent.EnteredEmail(it))
+                },
+                keyboardType = KeyboardType.Email,
+                error = when (emailText.value.error) {
+                    is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
+                    else -> ""
+                },
+                hint = stringResource(id = R.string.login_hint)
+            )
 
-            }}
-            else{
-                Text(text = " ")
-                UserForm(loading = false,isCreateAccount = true){email,password->
-                    loginViewModel.onEvent(event = LoginEvent.Register){
-                        //is Registration success -> navigate to HomeScreen.
-                        navController.navigate(Screen.HomeScreen.route)
-                    }
-                }
-            }
+
             Spacer(modifier = Modifier.height(15.dp))
 
-            Row(modifier = Modifier.padding(15.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.Bottom){
-                if(showLoginForm.value){
-                    Text(
-                        text = buildAnnotatedString {
-                            append(stringResource(id = R.string.dont_have_an_account_yet))
-                            append(" ")
-                            val signUpText = stringResource(id = R.string.signUp)
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                append(signUpText)
-                            }
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .clickable {
-                                showLoginForm.value = !showLoginForm.value
-                            }
-                    )
-                }else {
-                    Text(
-                        text = buildAnnotatedString {
-                            append(stringResource(id = R.string.already_have_an_account))
-                            append(" ")
-                            val loginText = stringResource(id = R.string.login)
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            ){
-                                append(loginText)
-                            }
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .clickable {
-                                showLoginForm.value = !showLoginForm.value
-                            }
-                    )
-
+            StandardInputField(
+                text = passwordText.value.text,
+                onValueChange = {
+                    loginViewModel.onEvent(LoginEvent.EnteredPassword(it))
+                },
+                hint = stringResource(id = R.string.password_hint),
+                keyboardType = KeyboardType.Password,
+                error = when (passwordText.value.error) {
+                    is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
+                    else -> ""
+                },
+                isPasswordVisible = state.value.isPasswordVisible,
+                onPasswordToggleClick = {
+                    loginViewModel.onEvent(LoginEvent.TogglePasswordVisibility)
                 }
+            )
 
-
+            Spacer(modifier = Modifier.height(SpaceMedium))
+            Button(
+                onClick = {
+                    loginViewModel.onEvent(LoginEvent.Login)
+                },
+                modifier = Modifier
+                    .align(Alignment.End)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.login),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+            if (state.value.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
             }
         }
-
-
-
-
+        Text(
+            text = buildAnnotatedString {
+                append(stringResource(id = R.string.dont_have_an_account_yet))
+                append(" ")
+                val signUpText = stringResource(id = R.string.signUp)
+                withStyle(
+                    style = SpanStyle(
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    append(signUpText)
+                }
+            },
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .clickable {
+                    onNavigate(
+                        Screen.RegisterScreen.route
+                    )
+                }
+        )
     }
-
 
 }

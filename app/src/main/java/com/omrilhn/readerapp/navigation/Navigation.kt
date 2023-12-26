@@ -41,9 +41,16 @@ fun Navigation(
             HomeScreen(navController = navController)
         }
         composable(Screen.LoginScreen.route){
-            LoginScreen(navController = navController){
-
-            }
+            LoginScreen(
+                onNavigate = navController::navigate,
+                onLoginClick = {
+                    navController.popBackStack(
+                        route = Screen.LoginScreen.route,
+                        inclusive = true
+                    )
+                    navController.navigate(route = Screen.HomeScreen.route)
+                },
+            )
         }
         composable(Screen.SearchScreen.route){
             SearchScreen()

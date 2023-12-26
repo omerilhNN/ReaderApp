@@ -9,4 +9,7 @@
     <string name="already_have_an_account">Already have an existing account?</string>
     <string name="login">Login</string>
     <string name="create_acct">Please enter a valid e-mail and password that is at least 6 characters.</string>
+    <string name="error_field_empty">This field can\'t be empty\n</string>
+    <string name="login_hint">E-mail</string>
+    <string name="password_hint">Password\n</string>
 </resources>

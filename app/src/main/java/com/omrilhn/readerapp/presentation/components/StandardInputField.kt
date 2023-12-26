@@ -37,7 +37,6 @@ import com.omrilhn.readerapp.R
 @Composable
 fun StandardInputField(
     modifier:Modifier = Modifier,
-    enabled: Boolean = true,
     text: String = "",
     label:String = "",
     hint:String = "",
@@ -54,8 +53,7 @@ fun StandardInputField(
     isPasswordVisible:Boolean = false,
     onPasswordToggleClick: (Boolean) -> Unit = {},
     onValueChange: (String) -> Unit,
-    imeAction: ImeAction = ImeAction.Default,
-    onAction: KeyboardActions = KeyboardActions.Default
+    focusRequester: FocusRequester = FocusRequester()
 ){
     Column(modifier = modifier
         .fillMaxWidth()
@@ -78,7 +76,6 @@ fun StandardInputField(
             isError = error != "",
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
-                imeAction = imeAction
             ),
             visualTransformation = if(isPasswordToggleDisplayed && !isPasswordVisible){
                 PasswordVisualTransformation()
@@ -123,8 +120,8 @@ fun StandardInputField(
             modifier = Modifier
                 .padding(start = 10.dp,bottom = 10.dp,end = 10.dp)
                 .fillMaxWidth()
+                .focusRequester(focusRequester = focusRequester)
                ,
-            keyboardActions = onAction
             )
         if(error.isNotEmpty()){
             Text(
