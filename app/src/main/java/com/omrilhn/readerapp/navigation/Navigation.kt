@@ -17,6 +17,7 @@ import com.omrilhn.readerapp.presentation.login.LoginScreen
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
 import com.omrilhn.readerapp.presentation.search.SearchScreen
 import com.omrilhn.readerapp.presentation.splash.SplashScreen
+import com.omrilhn.readerapp.presentation.stats.StatsScreen
 import com.omrilhn.readerapp.presentation.update.UpdateScreen
 
 
@@ -51,6 +52,9 @@ fun Navigation(
                     navController.navigate(route = Screen.HomeScreen.route)
                 },
             )
+        }
+        composable(Screen.StatsScreen.route){
+            StatsScreen(navController = navController)
         }
         composable(Screen.SearchScreen.route){
             SearchScreen()

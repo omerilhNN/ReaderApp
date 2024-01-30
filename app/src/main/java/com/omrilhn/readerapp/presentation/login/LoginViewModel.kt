@@ -128,6 +128,8 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                     }
                 }
             }
+
+            else -> { return}
         }
     }
     fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit)?){

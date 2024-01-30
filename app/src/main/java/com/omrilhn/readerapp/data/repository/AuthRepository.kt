@@ -6,6 +6,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.omrilhn.readerapp.core.domain.models.MUser
 import com.omrilhn.readerapp.utils.SimpleResource
 import javax.inject.Inject
 
@@ -29,9 +30,13 @@ class AuthRepository @Inject constructor(){
     private val auth = FirebaseAuth.getInstance()
     fun createUser(displayName:String?){
         val userId = auth.currentUser?.uid
-        val user = mutableMapOf<String,Any>()
-        user["user_id"] = userId.toString()
-        user["display_name"] = displayName.toString()
+
+        val user = MUser(userId = userId.toString(),
+            displayName = displayName.toString(),
+            avatarUrl ="",
+            quote = "Life is great",
+            profession = "Android developer",
+            id = null).toMap()
 
         FirebaseFirestore.getInstance().collection("users")
             .add(user)

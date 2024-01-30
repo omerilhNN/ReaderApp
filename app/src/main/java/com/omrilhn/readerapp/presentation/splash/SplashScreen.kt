@@ -59,11 +59,12 @@ fun SplashScreen(
             )
             delay(Constants.SPLASH_SCREEN_DURATION)
             navController.popBackStack()
-            if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
-                navController.navigate(Screen.LoginScreen.route)
-            }else{
-                navController.navigate(Screen.HomeScreen.route)
-            }
+//            if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+//                navController.navigate(Screen.LoginScreen.route)
+//            }else{
+//                navController.navigate(Screen.HomeScreen.route)
+//            }
+            navController.navigate(Screen.LoginScreen.route)
         }
     }
 
