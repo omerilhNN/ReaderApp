@@ -1,4 +1,4 @@
-package com.omrilhn.readerapp.presentation.components
+package com.omrilhn.readerapp.presentation.components.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

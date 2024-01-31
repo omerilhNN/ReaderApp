@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.omrilhn.readerapp.navigation.Screen
-import com.omrilhn.readerapp.presentation.components.TitleSection
+import com.omrilhn.readerapp.presentation.components.ListCard
 
 @Composable
 fun HomeContent(navController: NavController){
@@ -59,8 +59,10 @@ fun HomeContent(navController: NavController){
                 Divider()
 
             }
-        }
 
+        }
+        ListCard()
+    
     }
 
 }

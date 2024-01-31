@@ -1,4 +1,4 @@
-package com.omrilhn.readerapp.presentation.components
+package com.omrilhn.readerapp.presentation.components.home
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
