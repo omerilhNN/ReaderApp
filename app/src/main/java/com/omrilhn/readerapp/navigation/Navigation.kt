@@ -57,7 +57,7 @@ fun Navigation(
             StatsScreen(navController = navController)
         }
         composable(Screen.SearchScreen.route){
-            SearchScreen()
+            SearchScreen(navController = navController)
         }
 
     }

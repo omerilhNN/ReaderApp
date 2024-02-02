@@ -32,9 +32,8 @@ import coil.compose.rememberImagePainter
 import com.omrilhn.readerapp.core.domain.models.MBook
 import com.omrilhn.readerapp.presentation.components.home.BookRating
 
-@Preview
 @Composable
-fun ListCard(book:MBook = MBook("1","asd","1asd","123"),
+fun ListCard(book:MBook,
              onPressDetails: (String) -> Unit = {}){
     val context = LocalContext.current //Know things about whats going on, on screen
     val resources = context.resources //get Resources on current context
@@ -77,12 +76,12 @@ fun ListCard(book:MBook = MBook("1","asd","1asd","123"),
                     BookRating(3.5)
                 }
             }
-            Text(text = "Book title", modifier = Modifier.padding(4.dp),
+            Text(text = book.title.toString(), modifier = Modifier.padding(4.dp),
                 fontWeight = FontWeight.Bold,
                 maxLines = 2 ,
                 overflow = TextOverflow.Ellipsis)
 
-            Text(text = "Authors. All..",modifier = Modifier.padding(4.dp),
+            Text(text = book.authors.toString() ,modifier = Modifier.padding(4.dp),
                 style = MaterialTheme.typography.caption)
 
             Row(horizontalArrangement = Arrangement.End,

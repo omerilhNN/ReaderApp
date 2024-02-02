@@ -1,6 +1,8 @@
 package com.omrilhn.readerapp.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -20,9 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -34,8 +38,10 @@ import com.omrilhn.readerapp.navigation.Screen
 @Composable
 fun ReaderAppBar(
     title:String,
+    icon: ImageVector ?=null,
     showProfile:Boolean = true,
-    navController:NavController
+    navController:NavController,
+    onBackArrowClicked:() -> Unit = {}
 ){
     TopAppBar(
         title = {
@@ -47,11 +53,21 @@ fun ReaderAppBar(
                                 .clip(RoundedCornerShape(12.dp))
                                 .scale(0.9f))
                     }
+                    if(icon != null){//If there is an icon show clickable BACK icon
+                        Icon(imageVector = icon,contentDescription = "Arrow back",
+                            tint = Color.Red.copy(0.7f),
+                            modifier = Modifier.clickable { onBackArrowClicked.invoke() })
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    //Text part which comes after BACK ARROW Icon.
                     Text(text = title,
                         color = Color.Red.copy(alpha = 0.7f),
-                        style = TextStyle(fontWeight = FontWeight.Bold,fontSize = 20.sp )
+                        style = TextStyle(fontWeight = FontWeight.Bold,fontSize = 20.sp ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+
                     )
-                    Spacer(modifier = Modifier.weight(1f))
                 }
 
         },
@@ -62,8 +78,16 @@ fun ReaderAppBar(
                         navController.navigate(Screen.LoginScreen.route)
                       }
                   }){
-                      Icon(imageVector = Icons.Filled.Logout, contentDescription = "Logout",
-                          tint = Color.Green.copy(alpha = 0.4f))
+                      if(showProfile) Row(){
+                          Icon(imageVector = Icons.Filled.Logout, contentDescription = "Logout",
+                              tint = Color.Green.copy(alpha = 0.4f))
+
+                      }
+                      else{
+                          Box( ){
+
+                          }
+                      }
 
                   }
         },

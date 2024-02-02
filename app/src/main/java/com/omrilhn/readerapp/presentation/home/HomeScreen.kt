@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.FABContent
 import com.omrilhn.readerapp.presentation.components.ReaderAppBar
 
@@ -29,6 +30,7 @@ fun HomeScreen(navController: NavController){
     },
         floatingActionButton = {
             FABContent{
+                navController.navigate(Screen.SearchScreen.route)
 
             }
         }){ paddingValues->
