@@ -1,16 +1,15 @@
-package com.omrilhn.readerapp.presentation.components
+package com.omrilhn.readerapp.presentation.components.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omrilhn.readerapp.presentation.components.StandardInputField
 import com.omrilhn.readerapp.presentation.search.SearchViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)

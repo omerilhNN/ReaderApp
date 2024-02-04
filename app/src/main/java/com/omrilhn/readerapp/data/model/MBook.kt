@@ -1,4 +1,4 @@
-package com.omrilhn.readerapp.core.domain.models
+package com.omrilhn.readerapp.data.model
 
 // id is VAR because we change Firestore by adding into it.
 data class MBook(

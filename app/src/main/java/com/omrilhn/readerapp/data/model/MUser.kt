@@ -1,4 +1,4 @@
-package com.omrilhn.readerapp.core.domain.models
+package com.omrilhn.readerapp.data.model
 
 data class MUser(
     val id:String?,

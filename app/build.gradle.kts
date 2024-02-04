@@ -101,6 +101,10 @@ dependencies {
     //Coil
     implementation ("io.coil-kt:coil-compose:2.4.0")
 
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    //JSON Converter
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     // ViewModel

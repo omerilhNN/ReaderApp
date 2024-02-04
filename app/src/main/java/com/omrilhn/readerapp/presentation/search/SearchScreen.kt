@@ -1,6 +1,8 @@
 package com.omrilhn.readerapp.presentation.search
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -12,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.ReaderAppBar
-import com.omrilhn.readerapp.presentation.components.SearchForm
+import com.omrilhn.readerapp.presentation.components.search.BookList
+import com.omrilhn.readerapp.presentation.components.search.SearchForm
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +35,13 @@ fun SearchScreen(navController: NavController){
                 SearchForm(
                     modifier = Modifier.fillMaxWidth()
                         .padding(16.dp)
-                )
+                ){
+                    Log.d("TAG","Search Screen $it")
+                }
+                Spacer(modifier = Modifier.weight(0.2f)) //Spacing between the items of column
+
+                BookList(navController)
+
             }
         }
     }

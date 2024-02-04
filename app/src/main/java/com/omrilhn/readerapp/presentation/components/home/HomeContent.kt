@@ -23,16 +23,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-import com.omrilhn.readerapp.core.domain.models.MBook
+import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.navigation.Screen
-import com.omrilhn.readerapp.presentation.components.ListCard
 
 @Composable
 fun HomeContent(navController: NavController){
     val listOfBooks = listOf(
-        MBook(id = "asd",title = "Hello there",authors = "All of us ",notes = null),
-        MBook(id = "23",title = "Hello there",authors = "All of us ",notes = null),
-        MBook(id = "asdf",title = "Hello there",authors = "All of us ",notes = null)
+        com.omrilhn.readerapp.data.model.MBook(
+            id = "asd",
+            title = "Hello there",
+            authors = "All of us ",
+            notes = null
+        ),
+        com.omrilhn.readerapp.data.model.MBook(
+            id = "23",
+            title = "Hello there",
+            authors = "All of us ",
+            notes = null
+        ),
+        com.omrilhn.readerapp.data.model.MBook(
+            id = "asdf",
+            title = "Hello there",
+            authors = "All of us ",
+            notes = null
+        )
     )
 
     val email = FirebaseAuth.getInstance().currentUser?.email

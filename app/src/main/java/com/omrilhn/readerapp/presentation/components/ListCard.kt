@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,19 +20,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.omrilhn.readerapp.core.domain.models.MBook
+import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.presentation.components.home.BookRating
 
 @Composable
-fun ListCard(book:MBook,
+fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
              onPressDetails: (String) -> Unit = {}){
     val context = LocalContext.current //Know things about whats going on, on screen
     val resources = context.resources //get Resources on current context

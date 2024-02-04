@@ -1,4 +1,4 @@
-package com.omrilhn.readerapp.core.domain.models
+package com.omrilhn.readerapp.data.model
 
 import com.omrilhn.readerapp.utils.AuthError
 import com.omrilhn.readerapp.utils.SimpleResource
