@@ -97,7 +97,6 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                         _passwordTextState.value.text,
                      ){
                        home?.invoke() //If it is not null then execute it .
-
                     }
 //                    val loginResult = loginUseCase(
 //                        email = emailTextState.value.text,
@@ -132,7 +131,8 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
             else -> { return}
         }
     }
-    fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit)?){
+    fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit)?)
+    =viewModelScope.launch{
         try {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->

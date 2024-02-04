@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -58,14 +59,14 @@ fun ReaderAppBar(
                             tint = Color.Red.copy(0.7f),
                             modifier = Modifier.clickable { onBackArrowClicked.invoke() })
                     }
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(0.7f))
 
                     //Text part which comes after BACK ARROW Icon.
                     Text(text = title,
                         color = Color.Red.copy(alpha = 0.7f),
                         style = TextStyle(fontWeight = FontWeight.Bold,fontSize = 20.sp ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.align(Alignment.CenterVertically)
+
+                        modifier = Modifier.padding(4.dp)
 
                     )
                 }

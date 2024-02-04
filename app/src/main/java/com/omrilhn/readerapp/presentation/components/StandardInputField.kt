@@ -44,11 +44,14 @@ fun StandardInputField(
     style:TextStyle = TextStyle(fontSize = 18.sp,
         color = MaterialTheme.colorScheme.onBackground
     ),
+    enabled:Boolean = true,
     leadingIcon:ImageVector?=null,
     isSingleLine:Boolean = true,
     maxLines: Int =1,
     maxLength:Int = 40,
-    keyboardType: KeyboardType = KeyboardType.Text,
+     keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction:ImeAction = ImeAction.Default, //init imeAction and KeyboardAction in order to prevent initial value problems
+    onAction:KeyboardActions = KeyboardActions.Default,
     isPasswordToggleDisplayed: Boolean = keyboardType == KeyboardType.Password,
     isPasswordVisible:Boolean = false,
     onPasswordToggleClick: (Boolean) -> Unit = {},
@@ -67,6 +70,7 @@ fun StandardInputField(
                     onValueChange(it)
                 }
             },
+            enabled = enabled,
             maxLines = maxLines,
             textStyle = style,
             placeholder = {
@@ -76,7 +80,10 @@ fun StandardInputField(
             isError = error != "",
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
+                imeAction = imeAction
+
             ),
+            keyboardActions = onAction,
             visualTransformation = if(isPasswordToggleDisplayed && !isPasswordVisible){
                 PasswordVisualTransformation()
             }else{

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import coil.ImageLoader
 import com.omrilhn.readerapp.presentation.home.HomeScreen
+import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginScreen
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
 import com.omrilhn.readerapp.presentation.search.SearchScreen
@@ -27,6 +28,7 @@ fun Navigation(
     snackbarHostState: SnackbarHostState
 //    imageLoader: ImageLoader
 ){
+    val loginViewModel = hiltViewModel<LoginViewModel>()
     NavHost(
         navController = navController,
         startDestination = Screen.SplashScreen.route,
@@ -45,11 +47,13 @@ fun Navigation(
             LoginScreen(
                 onNavigate = navController::navigate,
                 onLoginClick = {
+                    loginViewModel.onEvent(LoginEvent.Login)
                     navController.popBackStack(
                         route = Screen.LoginScreen.route,
                         inclusive = true
                     )
                     navController.navigate(route = Screen.HomeScreen.route)
+
                 },
             )
         }

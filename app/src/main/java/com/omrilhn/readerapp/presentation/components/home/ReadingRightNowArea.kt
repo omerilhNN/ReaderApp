@@ -7,5 +7,4 @@ import com.omrilhn.readerapp.presentation.components.ListCard
 
 @Composable
 fun ReadingRightNowArea(books:List<MBook>, navController: NavController){
-    ListCard()
 }

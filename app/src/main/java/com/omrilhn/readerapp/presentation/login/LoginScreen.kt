@@ -125,9 +125,11 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(SpaceMedium))
             Button(
-                onClick = {
-                    loginViewModel.onEvent(LoginEvent.Login)
-                },
+                onClick = onLoginClick
+//                {
+//                    loginViewModel.onEvent(LoginEvent.Login){
+//                    }
+                ,
                 modifier = Modifier
                     .align(Alignment.End)
             ) {

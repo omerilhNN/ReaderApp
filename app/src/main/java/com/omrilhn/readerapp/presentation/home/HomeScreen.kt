@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.FABContent
 import com.omrilhn.readerapp.presentation.components.ReaderAppBar
+import com.omrilhn.readerapp.presentation.components.home.HomeContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +39,7 @@ fun HomeScreen(navController: NavController){
         Surface(modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues))   {
-            //TODO: Home content
+                HomeContent(navController = navController)
         }
 
     }
