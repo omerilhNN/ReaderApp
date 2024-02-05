@@ -39,13 +39,13 @@ fun SearchScreen(navController: NavController,
                         .fillMaxWidth()
                         .padding(16.dp),
                     searchViewModel = searchViewModel
-                ){query->
-                    searchViewModel.searchBooks(query)
+                ){searchQuery->
+                    searchViewModel.searchBooks(query = searchQuery)
 
                 }
                 Spacer(modifier = Modifier.weight(0.2f)) //Spacing between the items of column
 
-                BookList(navController)
+                BookList(navController,searchViewModel)
 
             }
         }
