@@ -8,6 +8,7 @@ import com.omrilhn.readerapp.core.domain.models.DataOrException
 import com.omrilhn.readerapp.core.domain.states.StandardTextFieldState
 import com.omrilhn.readerapp.data.model.Item
 import com.omrilhn.readerapp.data.repository.BookRepository
+import com.omrilhn.readerapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,11 +42,28 @@ class SearchViewModel @Inject constructor(private val bookRepository: BookReposi
         viewModelScope.launch(Dispatchers.Default) {
             if(query.isEmpty()) return@launch
 
-            _listOfBooks.value.loading = true
-            _listOfBooks.value = bookRepository.getBooks(query)
-            Log.d("Search","searchBooks: ${_listOfBooks.value.data.toString()}")
-            if(_listOfBooks.value.data.toString().isNotEmpty())
+            try{
+                when(val response = bookRepository.getBooks(query)) {
+                    is Resource.Success -> {
+                        //if GETTING BOOKS is successfull then assign that response to _listOfBooks
+                        //which is the SSOT of our Search logic
+                        _listOfBooks.value.data = response.data!!
+                        if (_listOfBooks.value.data!!.isNotEmpty())
+                            _listOfBooks.value.loading = false
+                    }
+
+                    is Resource.Error -> {
+                        _listOfBooks.value.loading = false
+                        Log.e("Network", "Search books: failed getting books")
+                    }
+                    else -> {_listOfBooks.value.loading = false}
+                }
+
+            }catch(e:Exception){
                 _listOfBooks.value.loading = false
+                Log.d("Network","searchBooks: ${e.message.toString()}")
+            }
+
         }
     }
 
