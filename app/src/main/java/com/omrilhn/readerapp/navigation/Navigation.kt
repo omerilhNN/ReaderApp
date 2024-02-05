@@ -1,5 +1,6 @@
 package com.omrilhn.readerapp.navigation
 
+import android.widget.SearchView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginScreen
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
 import com.omrilhn.readerapp.presentation.search.SearchScreen
+import com.omrilhn.readerapp.presentation.search.SearchViewModel
 import com.omrilhn.readerapp.presentation.splash.SplashScreen
 import com.omrilhn.readerapp.presentation.stats.StatsScreen
 import com.omrilhn.readerapp.presentation.update.UpdateScreen
@@ -29,6 +31,7 @@ fun Navigation(
 //    imageLoader: ImageLoader
 ){
     val loginViewModel = hiltViewModel<LoginViewModel>()
+    val searchViewModel = hiltViewModel<SearchViewModel>()
     NavHost(
         navController = navController,
         startDestination = Screen.SplashScreen.route,
@@ -61,7 +64,7 @@ fun Navigation(
             StatsScreen(navController = navController)
         }
         composable(Screen.SearchScreen.route){
-            SearchScreen(navController = navController)
+            SearchScreen(navController = navController,searchViewModel)
         }
 
     }

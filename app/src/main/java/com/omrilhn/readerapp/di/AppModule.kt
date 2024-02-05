@@ -2,6 +2,7 @@ package com.omrilhn.readerapp.di
 
 import android.app.Application
 import coil.ImageLoader
+import com.omrilhn.readerapp.data.repository.BookRepository
 import com.omrilhn.readerapp.network.BooksApi
 import com.omrilhn.readerapp.utils.Constants
 import dagger.Module
@@ -25,6 +26,9 @@ object AppModule {
             }
             .build()
     }
+    @Provides
+    @Singleton
+    fun provideBookRepository(api:BooksApi) = BookRepository(api)
     @Provides
     @Singleton
     fun provideBookApi():BooksApi{

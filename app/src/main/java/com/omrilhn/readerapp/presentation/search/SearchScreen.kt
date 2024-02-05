@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omrilhn.readerapp.presentation.components.ReaderAppBar
 import com.omrilhn.readerapp.presentation.components.search.BookList
@@ -20,7 +21,8 @@ import com.omrilhn.readerapp.presentation.components.search.SearchForm
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavController){
+fun SearchScreen(navController: NavController,
+                 searchViewModel: SearchViewModel = hiltViewModel()){
     Scaffold(topBar = {
         ReaderAppBar(title = "Search books",
             navController = navController,
@@ -33,10 +35,13 @@ fun SearchScreen(navController: NavController){
         Surface(modifier = Modifier.padding(padding)){
             Column {
                 SearchForm(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(16.dp)
-                ){
-                    Log.d("TAG","Search Screen $it")
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    searchViewModel = searchViewModel
+                ){query->
+                    searchViewModel.searchBooks(query)
+
                 }
                 Spacer(modifier = Modifier.weight(0.2f)) //Spacing between the items of column
 
