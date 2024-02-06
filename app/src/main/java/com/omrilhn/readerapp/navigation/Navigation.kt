@@ -10,9 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import coil.ImageLoader
+import com.omrilhn.readerapp.presentation.details.BookDetailsScreen
 import com.omrilhn.readerapp.presentation.home.HomeScreen
 import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginScreen
@@ -65,6 +68,19 @@ fun Navigation(
         }
         composable(Screen.SearchScreen.route){
             SearchScreen(navController = navController,searchViewModel)
+        }
+
+        //once you declare a path like "/{bookId}" you need to specify it inside navArgument both must have the same name.
+        //backStackEntry -> means ROUTE's CURRENT STATE!!
+        val detailScreen = Screen.BookDetailsScreen.route
+        composable("$detailScreen/{bookId}",arguments = listOf(navArgument("bookId"){
+            type = NavType.StringType
+        })){ backStackEntry->
+            //let block will be executed if bookId isNotNull().
+            backStackEntry.arguments?.getString("bookId").let {
+                BookDetailsScreen(navController = navController, bookId = it.toString())
+
+            }
         }
 
     }

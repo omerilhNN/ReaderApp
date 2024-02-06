@@ -37,7 +37,10 @@ fun SearchForm(
         },
             hint = "Enter a book name to Search",
             label = "Search",
-            onValueChange = {})
+            onValueChange = {
+                //use StateFlow's update method inside of setSearchText method to change its val
+                searchViewModel.setSearchText(it)
+            })
 
 
     }

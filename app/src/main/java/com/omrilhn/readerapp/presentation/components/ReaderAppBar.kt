@@ -52,7 +52,7 @@ fun ReaderAppBar(
                             contentDescription = "Logo icon",
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
-                                .scale(0.9f))
+                                .scale(0.5f))
                     }
                     if(icon != null){//If there is an icon show clickable BACK icon
                         Icon(imageVector = icon,contentDescription = "Arrow back",

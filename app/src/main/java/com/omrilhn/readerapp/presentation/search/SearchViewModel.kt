@@ -1,10 +1,6 @@
 package com.omrilhn.readerapp.presentation.search
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omrilhn.readerapp.core.domain.states.StandardTextFieldState
@@ -24,11 +20,11 @@ class SearchViewModel @Inject constructor(private val bookRepository: BookReposi
     private val _searchQueryState = MutableStateFlow(StandardTextFieldState())
     val searchQueryState: StateFlow<StandardTextFieldState> = _searchQueryState
 
-    //Having READ accesibility to _listOfBooks by asStateFlow
-    private val _searchBookState = MutableStateFlow<SearchState>(SearchState())
-    val searchBookState: StateFlow<SearchState> = _searchBookState.asStateFlow()
-//I have set isLoading parameter into SearchState so it is easy to control by State
+    //Having READ accesibility to _listOfBooks by asStateFlow - init isLoading property as true
+    private val _searchBookState = MutableStateFlow<SearchBookState>(SearchBookState(isLoading = true))
+    val searchBookState: StateFlow<SearchBookState> = _searchBookState.asStateFlow()
 
+//I have set isLoading parameter into SearchState so it is easy to control by State
 //    private var _isLoading: MutableState<Boolean> = mutableStateOf(true)
 //    var isLoading: Boolean by _isLoading
 
@@ -36,9 +32,9 @@ class SearchViewModel @Inject constructor(private val bookRepository: BookReposi
         searchBooks("android")
     }
 
-    fun setSearchText(query:String){
+    fun setSearchText(search:String){
         _searchQueryState.update {currentState->
-            currentState.copy(text = query)
+            currentState.copy(text = search)
         }
     }
     fun searchBooks(query: String) {
@@ -55,6 +51,11 @@ class SearchViewModel @Inject constructor(private val bookRepository: BookReposi
                       }
                         if (_searchBookState.value.listOfBooks.isNotEmpty())
                             _searchBookState.value.isLoading = false
+                        else {
+                            //TODO: Show a toaster message there is no book named by that query
+                            _searchBookState.value.isLoading = false
+
+                        }
                     }
 
                     is Resource.Error -> {
