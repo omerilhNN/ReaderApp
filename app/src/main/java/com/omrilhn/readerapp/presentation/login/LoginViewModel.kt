@@ -9,11 +9,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.omrilhn.readerapp.data.repository.AuthRepository
 import com.omrilhn.readerapp.core.domain.states.PasswordTextFieldState
 import com.omrilhn.readerapp.core.domain.states.StandardTextFieldState
 import com.omrilhn.readerapp.core.domain.use_case.LoginUseCase
+import com.omrilhn.readerapp.data.model.MUser
 import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val authRepository: AuthRepository,
                                          private val loginUseCase: LoginUseCase) : ViewModel() {
+
     private val auth: FirebaseAuth = Firebase.auth
 
     private val _emailTextState = MutableStateFlow(StandardTextFieldState())
@@ -76,7 +79,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
         when(event){
             is LoginEvent.EnteredEmail -> {
                 _emailTextState.update { currentState -> //Also use StateFlow's update method
-                    currentState.copy(text = event.email)
+                    currentState.copy(text =event.email )
                 }
             }
             is LoginEvent.EnteredPassword->{
@@ -93,11 +96,12 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                 viewModelScope.launch {
                     _loginState.value = loginState.value.copy(isLoading = true)
                     signInWithEmailAndPassword(
-                        _emailTextState.value.text,
-                        _passwordTextState.value.text,
+                        emailTextState.value.text,
+                        passwordTextState.value.text,
                      ){
                        home?.invoke() //If it is not null then execute it .
                     }
+
 //                    val loginResult = loginUseCase(
 //                        email = emailTextState.value.text,
 //                        password = passwordTextState.value.text
@@ -133,16 +137,16 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
     }
     fun signInWithEmailAndPassword(email:String,password:String,home: (() -> Unit)?)
     =viewModelScope.launch{
+
         try {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful){
                         Log.d("FB", "signInWithEmailAndPassword: Yayayay! ${task.result.toString()}")
-                        //Todo: take them home
                         home?.invoke() // when Home function is not null -> execute
 
                     }else {
-                        Log.d("FB", "signInWithEmailAndPassword: ${task.result.toString()}")
+                        Log.d("FB", "signInWithEmailAndPassword complete but Task unsuccesful: ${task.result.toString()}")
                     }
 
 
@@ -166,7 +170,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                 .addOnCompleteListener { task->
                     if(task.isSuccessful){
                         val displayName = task.result?.user?.email?.split('@')?.get(0)
-                        authRepository.createUser(displayName)
+                        authRepository.createUser(displayName,auth)
                         home?.invoke()
                     }else{
                         Log.d(TAG,"createUserWithEmailAndPassword: ${task.result.toString()}")
@@ -177,5 +181,6 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                 }
         }
     }
+
 
 }

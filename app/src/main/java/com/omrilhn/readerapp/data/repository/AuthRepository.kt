@@ -22,8 +22,7 @@ class AuthRepository @Inject constructor(){
 //            Log.d("FB","signInWithEmailAndPassword Exception : ${e.localizedMessage}")
 //        }
 //    }
-    private val auth = FirebaseAuth.getInstance()
-    fun createUser(displayName:String?){
+    fun createUser(displayName:String?,auth:FirebaseAuth = FirebaseAuth.getInstance()){
         val userId = auth.currentUser?.uid
 
         val user = com.omrilhn.readerapp.data.model.MUser(

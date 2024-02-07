@@ -1,5 +1,6 @@
 package com.omrilhn.readerapp.presentation.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,8 @@ import com.omrilhn.readerapp.ui.theme.SpaceLarge
 import com.omrilhn.readerapp.ui.theme.SpaceMedium
 import com.omrilhn.readerapp.ui.theme.SpaceSmall
 import com.omrilhn.readerapp.utils.AuthError
+import com.omrilhn.readerapp.utils.UiEvent
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -52,15 +56,35 @@ fun LoginScreen(
     loginViewModel:LoginViewModel = hiltViewModel(),
     onNavigate:(String) -> Unit = {},
     isCreateAccount:Boolean = false,
-    onLoginClick: ()->Unit = {})
+    onLoginClick: ()->Unit = {},
+    )
 {
     val emailText = loginViewModel.emailTextState.collectAsState()
     val passwordText = loginViewModel.passwordTextState.collectAsState()
     val isValid = loginViewModel.validInput.value //Email-Password inputs isValid?
     val state = loginViewModel.loginState.collectAsState()
     val context = LocalContext.current
+    LaunchedEffect(key1 = true) {
+        loginViewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar-> {
+                    //TODO:Show snackbar
+                }
+                is UiEvent.Navigate -> {
+                    onNavigate(event.route)
+                }
+                is UiEvent.OnLogin -> {
+                    onLoginClick()
+                }
 
-    val showLoginForm = rememberSaveable{ mutableStateOf(true)}
+                else -> {
+                    Log.d("Eror","None of the UI events happened")
+                }
+            }
+        }
+    }
+
+//    val showLoginForm = rememberSaveable{ mutableStateOf(true)}
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -125,10 +149,10 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(SpaceMedium))
             Button(
-                onClick = onLoginClick
-//                {
-//                    loginViewModel.onEvent(LoginEvent.Login){
-//                    }
+                onClick = {
+//                    loginViewModel.onEvent(LoginEvent.Login)
+                          onLoginClick()
+                }
                 ,
                 modifier = Modifier
                     .align(Alignment.End)

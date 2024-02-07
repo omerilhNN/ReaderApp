@@ -60,7 +60,7 @@ fun Navigation(
                     )
                     navController.navigate(route = Screen.HomeScreen.route)
 
-                },
+                }
             )
         }
         composable(Screen.StatsScreen.route){
