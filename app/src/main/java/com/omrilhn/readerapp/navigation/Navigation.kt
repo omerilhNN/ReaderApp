@@ -20,6 +20,7 @@ import com.omrilhn.readerapp.presentation.home.HomeScreen
 import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginScreen
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
+import com.omrilhn.readerapp.presentation.register.RegisterScreen
 import com.omrilhn.readerapp.presentation.search.SearchScreen
 import com.omrilhn.readerapp.presentation.search.SearchViewModel
 import com.omrilhn.readerapp.presentation.splash.SplashScreen
@@ -49,11 +50,20 @@ fun Navigation(
         composable(Screen.HomeScreen.route){
             HomeScreen(navController = navController)
         }
+        composable(Screen.RegisterScreen.route){
+            RegisterScreen(navController = navController){
+                navController.popBackStack(
+                    route = Screen.RegisterScreen.route,
+                    inclusive = true
+                )
+                navController.navigate(Screen.HomeScreen.route)
+            }
+        }
         composable(Screen.LoginScreen.route){
             LoginScreen(
                 onNavigate = navController::navigate,
                 onLoginClick = {
-                    loginViewModel.onEvent(LoginEvent.Login)
+//                    loginViewModel.onEvent(LoginEvent.Login)
                     navController.popBackStack(
                         route = Screen.LoginScreen.route,
                         inclusive = true

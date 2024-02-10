@@ -62,7 +62,7 @@ fun UserForm(
             hint = stringResource(id = R.string.email),
             enabled = !loading,
             onValueChange ={
-                viewModel.onEvent(LoginEvent.EnteredEmail(it))
+                viewModel.setEmailText(it)
             },
             onAction = KeyboardActions{
                 passwordFocusRequest.requestFocus()
@@ -82,7 +82,7 @@ fun UserForm(
             label = "Password",
             hint = stringResource(id = R.string.password),
             onValueChange ={
-                viewModel.onEvent(LoginEvent.EnteredPassword(it))},
+                viewModel.setPasswordText(it)},
             keyboardType = KeyboardType.Password,
             error = viewModel.passwordError.value,
             onAction = KeyboardActions{
@@ -96,7 +96,7 @@ fun UserForm(
             isSingleLine = true,
             isPasswordVisible = state.value.isPasswordVisible,
             onPasswordToggleClick = {
-                viewModel.onEvent(LoginEvent.TogglePasswordVisibility)},
+                viewModel.togglePassword()},
             style = TextStyle(fontSize = 18.sp,color = MaterialTheme.colorScheme.onBackground),
 
 

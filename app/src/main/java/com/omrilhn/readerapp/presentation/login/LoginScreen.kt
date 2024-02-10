@@ -117,14 +117,15 @@ fun LoginScreen(
             StandardInputField(
                 text = emailText.value.text,
                 onValueChange = {
-                    loginViewModel.onEvent(LoginEvent.EnteredEmail(it))
+                    loginViewModel.setEmailText(it)
                 },
                 keyboardType = KeyboardType.Email,
                 error = when (emailText.value.error) {
                     is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
                     else -> ""
                 },
-                hint = stringResource(id = R.string.login_hint)
+                hint = stringResource(id = R.string.login_hint),
+                label = stringResource(id = R.string.email)
             )
 
 
@@ -133,9 +134,10 @@ fun LoginScreen(
             StandardInputField(
                 text = passwordText.value.text,
                 onValueChange = {
-                    loginViewModel.onEvent(LoginEvent.EnteredPassword(it))
+                    loginViewModel.setPasswordText(it)
                 },
                 hint = stringResource(id = R.string.password_hint),
+                label = stringResource(id = R.string.password),
                 keyboardType = KeyboardType.Password,
                 error = when (passwordText.value.error) {
                     is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
@@ -143,15 +145,15 @@ fun LoginScreen(
                 },
                 isPasswordVisible = state.value.isPasswordVisible,
                 onPasswordToggleClick = {
-                    loginViewModel.onEvent(LoginEvent.TogglePasswordVisibility)
+                    loginViewModel.togglePassword()
                 }
             )
 
             Spacer(modifier = Modifier.height(SpaceMedium))
             Button(
                 onClick = {
-//                    loginViewModel.onEvent(LoginEvent.Login)
-                          onLoginClick()
+                    loginViewModel.signInWithEmailAndPassword(emailText.value.text,passwordText.value.text)
+                    onLoginClick()
                 }
                 ,
                 modifier = Modifier
