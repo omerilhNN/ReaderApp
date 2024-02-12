@@ -1,5 +1,6 @@
 package com.omrilhn.readerapp.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -48,12 +51,14 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
             .padding(16.dp)
             .height(242.dp)
             .width(202.dp)
-            .clickable { onPressDetails.invoke(book.title.toString()) } //use invoke in order to make code READABLE
+            .clickable {
+                Log.d("LISTCARD","LIST CARD CLICKED")
+                onPressDetails.invoke(book.title.toString()) } //use invoke in order to make code READABLE
     ){
         Column(modifier = Modifier.width(screenWidth.dp - (spacing * 2 )),
             horizontalAlignment = Alignment.Start){
             Row(horizontalArrangement = Arrangement.Center){
-                Image(painter = rememberAsyncImagePainter("")
+                Image(painter = rememberAsyncImagePainter(book.photoUrl.toString())
                     ,contentDescription = "BookLogo"
                     ,modifier = Modifier
                         .height(140.dp)
@@ -69,7 +74,7 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
                     Icon(imageVector = Icons.Rounded.FavoriteBorder, contentDescription ="Fav icon" ,
                         modifier = Modifier.padding(bottom = 1.dp)
                         )
-                    BookRating(3.5)
+                    BookRating(score = book.rating!!)
                 }
             }
             Text(text = book.title.toString(), modifier = Modifier.padding(4.dp),
@@ -80,9 +85,13 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
             Text(text = book.authors.toString() ,modifier = Modifier.padding(4.dp),
                 style = MaterialTheme.typography.caption)
 
+            val isStartedReading = remember {
+                mutableStateOf(false)
+            }
             Row(horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom){
-                RoundedButton("Reading",radius = 70)
+                isStartedReading.value = book.startedReading != null
+                RoundedButton(label = if (isStartedReading.value)"Reading" else "Not yet",radius = 70)
             }
         }
 

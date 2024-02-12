@@ -17,6 +17,7 @@ import androidx.navigation.navArgument
 import coil.ImageLoader
 import com.omrilhn.readerapp.presentation.details.BookDetailsScreen
 import com.omrilhn.readerapp.presentation.home.HomeScreen
+import com.omrilhn.readerapp.presentation.home.HomeViewModel
 import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginScreen
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
@@ -36,6 +37,7 @@ fun Navigation(
 ){
     val loginViewModel = hiltViewModel<LoginViewModel>()
     val searchViewModel = hiltViewModel<SearchViewModel>()
+    val homeViewModel = hiltViewModel<HomeViewModel>()
     NavHost(
         navController = navController,
         startDestination = Screen.SplashScreen.route,
@@ -44,11 +46,9 @@ fun Navigation(
         composable(Screen.SplashScreen.route){
             SplashScreen(navController = navController)
         }
-        composable(Screen.UpdateScreen.route){
-            UpdateScreen()
-        }
+
         composable(Screen.HomeScreen.route){
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController,homeViewModel = homeViewModel)
         }
         composable(Screen.RegisterScreen.route){
             RegisterScreen(navController = navController){
@@ -78,6 +78,17 @@ fun Navigation(
         }
         composable(Screen.SearchScreen.route){
             SearchScreen(navController = navController,searchViewModel)
+        }
+        val updateScreen =Screen.UpdateScreen.route
+        composable("$updateScreen/{bookItemId}",arguments = listOf(navArgument("bookItemId "){
+            type = NavType.StringType }
+        )){navBackStackEntry -> //backStack entry provides accesibility to
+            // the current route, and that routes parameters
+            navBackStackEntry.arguments?.getString("bookItemId").let {
+                //if that bookItemId arguments isNotNull -> give this to the parameter of UpdateScreen
+                UpdateScreen(navController = navController, bookItemId = it.toString())
+            }
+
         }
 
         //once you declare a path like "/{bookId}" you need to specify it inside navArgument both must have the same name.

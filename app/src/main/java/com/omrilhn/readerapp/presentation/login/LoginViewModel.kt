@@ -82,31 +82,6 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
         }
     }
 
-    fun createWithEmailAndPassword(
-        email:String,
-        password:String,
-        home:(() -> Unit)?
-    ){
-        if(!_loginState.value.isLoading){
-            //when LOADING is false update isLoading property by changing it to true
-            _loginState.update {currentState->
-                currentState.copy(isLoading = true)
-            }
-            auth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener { task->
-                    if(task.isSuccessful){
-                        val displayName = task.result?.user?.email?.split('@')?.get(0)
-                        authRepository.createUser(displayName)
-                        home?.invoke()
-                    }else{
-                        Log.d(TAG,"createUserWithEmailAndPassword: ${task.result.toString()}")
-                    }
-                    _loginState.update{currentState->
-                        currentState.copy(isLoading = false)
-                    }
-                }
-        }
-    }
     fun setEmailText(email:String){
         _emailTextState.update{currentState->
             currentState.copy(text = email)

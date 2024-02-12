@@ -1,5 +1,6 @@
 package com.omrilhn.readerapp.presentation.components.home
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,39 +16,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.navigation.Screen
+import com.omrilhn.readerapp.presentation.home.HomeViewModel
 
 @Composable
-fun HomeContent(navController: NavController){
-    val listOfBooks = listOf(
-        com.omrilhn.readerapp.data.model.MBook(
-            id = "asd",
-            title = "Hello there",
-            authors = "All of us ",
-            notes = null
-        ),
-        com.omrilhn.readerapp.data.model.MBook(
-            id = "23",
-            title = "Hello there",
-            authors = "All of us ",
-            notes = null
-        ),
-        com.omrilhn.readerapp.data.model.MBook(
-            id = "asdf",
-            title = "Hello there",
-            authors = "All of us ",
-            notes = null
-        )
-    )
+fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltViewModel()){
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val listOfBooks = viewModel.listOfBooks.collectAsState()
+
+    // if data inside viewModel's books ->  initialize "listOfBooks" with it
+    if(!viewModel.data.value.data.isNullOrEmpty()){
+         listOfBooks.value.data = viewModel.data.value.data!!.toList().filter {mBook->
+            mBook.userId == currentUser?.uid.toString()
+        }
+        if(!listOfBooks.value.data.isNullOrEmpty())
+            viewModel.updateListOfBooks(listOfBooks.value.data!!)
+        else Log.d("BOOK","Book list is empty ")
+    }
 
     val email = FirebaseAuth.getInstance().currentUser?.email
     val currentUserName = if(!email.isNullOrEmpty())
@@ -82,11 +78,12 @@ fun HomeContent(navController: NavController){
             }
 
         }
-        ReadingRightNowArea(books = listOf(), navController = navController)
+        listOfBooks.value.data?.let { ReadingRightNowArea(listOfBooks = it, navController = navController) }
         
         TitleSection(label = "Reading List")
 
-        BookListArea(listOfBooks = listOfBooks, navController =navController)
+        listOfBooks.value.data?.let {//if data is not null -> execute that block of code
+            BookListArea(listOfBooks = it, navController =navController) }
 
     }
 
