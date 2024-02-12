@@ -1,4 +1,4 @@
-package com.omrilhn.readerapp.presentation.components
+package com.omrilhn.readerapp.presentation.components.update
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,7 +33,7 @@ fun CardListItem(book:MBook,
             bottom = 8.dp
         )
         .clip(RoundedCornerShape(20.dp))
-        .clickable { }, elevation = CardDefaults.cardElevation(8.dp)){
+        .clickable {onPressDetails() }, elevation = CardDefaults.cardElevation(8.dp)){
 
         Row(horizontalArrangement = Arrangement.Start){
             Image(painter = rememberAsyncImagePainter(model = book.photoUrl.toString()),
@@ -47,6 +47,13 @@ fun CardListItem(book:MBook,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis)
+                Text(text = book.authors.toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 8.dp,
+                        end = 8.dp,
+                        top = 2.dp,
+                        bottom = 0.dp))
+
                 Text(text = book.publishedDate.toString(),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(start = 8.dp,

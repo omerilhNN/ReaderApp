@@ -49,8 +49,8 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
             .padding(16.dp)
-            .height(242.dp)
-            .width(202.dp)
+            .height(280.dp)
+            .width(220.dp)
             .clickable {
                 Log.d("LISTCARD","LIST CARD CLICKED")
                 onPressDetails.invoke(book.title.toString()) } //use invoke in order to make code READABLE
@@ -61,11 +61,11 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
                 Image(painter = rememberAsyncImagePainter(book.photoUrl.toString())
                     ,contentDescription = "BookLogo"
                     ,modifier = Modifier
-                        .height(140.dp)
-                        .width(100.dp)
+                        .height(110.dp)
+                        .width(85.dp)
                         .padding(4.dp))
 
-                Spacer(modifier = Modifier.weight(0.7f,fill = false))
+                Spacer(modifier = Modifier.width(50.dp))
 
                 Column(modifier = Modifier.padding(top = 20.dp),
                     verticalArrangement = Arrangement.Center,
@@ -77,12 +77,12 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
                     BookRating(score = book.rating!!)
                 }
             }
-            Text(text = book.title.toString(), modifier = Modifier.padding(4.dp),
+            Text(text = book.title.toString(), modifier = Modifier.padding(2.dp),
                 fontWeight = FontWeight.Bold,
                 maxLines = 2 ,
                 overflow = TextOverflow.Ellipsis)
 
-            Text(text = book.authors.toString() ,modifier = Modifier.padding(4.dp),
+            Text(text = book.authors.toString() ,modifier = Modifier.padding(2.dp),
                 style = MaterialTheme.typography.caption)
 
             val isStartedReading = remember {

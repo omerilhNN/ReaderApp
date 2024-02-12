@@ -1,5 +1,6 @@
 package com.omrilhn.readerapp.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +35,9 @@ fun HorizontalScrollableItem(listOfBooks:List<com.omrilhn.readerapp.data.model.M
         if(viewModel.data.value.loading == true){
             LinearProgressIndicator()
         }else{
-            if(listOfBooks.isEmpty()){
+            Log.d("TEST","viewModel data loading == false ")
+            if(listOfBooks.isNullOrEmpty()){
+                Log.d("TEST", listOfBooks.toString())
                 Surface(modifier = Modifier.padding(20.dp)) {
                     Text(text = "No books found. Add a book",
                         style = TextStyle(
@@ -45,6 +48,8 @@ fun HorizontalScrollableItem(listOfBooks:List<com.omrilhn.readerapp.data.model.M
                     )
                 }
             }else{
+                Log.d("TEST","listOfBooks: ${listOfBooks.isNullOrEmpty()}")
+
                 for(book in listOfBooks){
                     ListCard(book){
                         //OnCardPressed -> show details

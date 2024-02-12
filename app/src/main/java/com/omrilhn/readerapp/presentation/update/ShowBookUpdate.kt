@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.omrilhn.readerapp.core.domain.models.DataOrException
 import com.omrilhn.readerapp.data.model.MBook
-import com.omrilhn.readerapp.presentation.components.CardListItem
+import com.omrilhn.readerapp.presentation.components.update.CardListItem
 
 @Composable
 fun ShowBookUpdate(bookInfo: DataOrException<List<MBook>,Boolean,Exception>,

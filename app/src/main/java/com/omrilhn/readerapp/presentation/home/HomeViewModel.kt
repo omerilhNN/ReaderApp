@@ -23,6 +23,18 @@ class HomeViewModel @Inject constructor(
     private val _listOfBooks = MutableStateFlow<DataOrException<List<MBook>,Boolean,Exception>>(DataOrException())
     val listOfBooks: StateFlow<DataOrException<List<MBook>,Boolean,Exception>> get() = _listOfBooks.asStateFlow()
 
+    private val _thoughtText = MutableStateFlow<String>("")
+    val thoughtText:StateFlow<String> get() = _thoughtText.asStateFlow()
+
+    //VALUES FOR UPDATE SCREEN -> Manage both screens VM
+    //***************************************
+    private val _isStartedReading = mutableStateOf(false)
+    val isStartedReading:Boolean get() = _isStartedReading.value
+    private val _isFinishedReading = mutableStateOf(false)
+    val isFinishedReading:Boolean get() = _isFinishedReading.value
+
+    // ***************************************
+
 
     val data: MutableState<DataOrException<List<MBook>,Boolean,Exception>>
         = mutableStateOf(DataOrException(listOf(),true,Exception("")))
@@ -41,5 +53,11 @@ class HomeViewModel @Inject constructor(
     }
     fun updateListOfBooks(books:List<MBook>){
         _listOfBooks.value.data = books
+    }
+    fun setThoughtText(thought:String){
+        _thoughtText.value = thought
+    }
+    fun setIsFinishedReading(){
+        _isFinishedReading.value = !_isFinishedReading.value
     }
 }

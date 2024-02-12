@@ -79,13 +79,13 @@ fun Navigation(
         composable(Screen.SearchScreen.route){
             SearchScreen(navController = navController,searchViewModel)
         }
-        val updateScreen =Screen.UpdateScreen.route
-        composable("$updateScreen/{bookItemId}",arguments = listOf(navArgument("bookItemId "){
-            type = NavType.StringType }
-        )){navBackStackEntry -> //backStack entry provides accesibility to
-            // the current route, and that routes parameters
+        val updateName = Screen.UpdateScreen.route
+        composable("$updateName/{bookItemId}",
+            arguments = listOf(navArgument("bookItemId") {
+                type = NavType.StringType
+            })) { navBackStackEntry ->
+
             navBackStackEntry.arguments?.getString("bookItemId").let {
-                //if that bookItemId arguments isNotNull -> give this to the parameter of UpdateScreen
                 UpdateScreen(navController = navController, bookItemId = it.toString())
             }
 

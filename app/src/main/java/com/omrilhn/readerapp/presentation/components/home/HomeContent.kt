@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,7 +59,8 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
         Row(modifier = Modifier.align(alignment = Alignment.Start)){
             TitleSection(label = "Your reading\n" + " activity right now..")
             Spacer(modifier = Modifier.fillMaxWidth(0.7f) )
-            Column(horizontalAlignment = Alignment.End){
+
+            Column{
                 Icon(imageVector = Icons.Filled.AccountCircle,
                     contentDescription = "Profile",
                     modifier = Modifier
@@ -78,12 +82,16 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
             }
 
         }
-        listOfBooks.value.data?.let { ReadingRightNowArea(listOfBooks = it, navController = navController) }
-        
-        TitleSection(label = "Reading List")
+        Column(modifier = Modifier.fillMaxSize().padding(start=2.dp,end = 2.dp)){
+            listOfBooks.value.data?.let {
+                ReadingRightNowArea(listOfBooks = it, navController = navController) }
 
-        listOfBooks.value.data?.let {//if data is not null -> execute that block of code
-            BookListArea(listOfBooks = it, navController =navController) }
+            TitleSection(label = "Reading List")
+
+            listOfBooks.value.data?.let {//if data is not null -> execute that block of code
+                BookListArea(listOfBooks = it, navController =navController) }
+        }
+
 
     }
 

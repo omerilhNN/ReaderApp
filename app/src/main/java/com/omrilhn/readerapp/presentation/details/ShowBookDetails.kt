@@ -53,9 +53,6 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
     val cleanDescription = HtmlCompat.fromHtml(bookData!!.description,
         HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
 
-
-
-
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .padding(3.dp),

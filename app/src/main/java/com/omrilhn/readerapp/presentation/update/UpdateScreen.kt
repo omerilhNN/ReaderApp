@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.omrilhn.readerapp.core.domain.models.DataOrException
 import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.presentation.components.ReaderAppBar
+import com.omrilhn.readerapp.presentation.components.update.ShowSimpleForm
 import com.omrilhn.readerapp.presentation.home.HomeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
@@ -65,9 +66,13 @@ fun UpdateScreen(navController: NavController,bookItemId:String,
                         .fillMaxWidth(),
                         shape = CircleShape,
                         shadowElevation = 4.dp){
-                            ShowBookUpdate(bookInfo = viewModel.data.value,bookItemId = bookItemId)
-
+                            ShowBookUpdate(bookInfo = viewModel.data.value,
+                                bookItemId = bookItemId)
                     }
+                    //book parameter -> Obtained Data from Firestore DB -> viewModel.data.value
+                    ShowSimpleForm(book = viewModel.data.value.data?.first { mBook->
+                        mBook.googleBookId == bookItemId
+                    }!!, navController = navController )
                 }
             }
 
