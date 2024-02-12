@@ -60,4 +60,7 @@ class HomeViewModel @Inject constructor(
     fun setIsFinishedReading(){
         _isFinishedReading.value = !_isFinishedReading.value
     }
+    fun setIsReadingStarted(){
+        _isStartedReading.value = !_isStartedReading.value
+    }
 }

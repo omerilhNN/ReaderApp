@@ -18,12 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 import com.omrilhn.readerapp.data.model.MBook
+import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.RoundedButton
 import com.omrilhn.readerapp.presentation.home.HomeViewModel
+import com.omrilhn.readerapp.utils.formatDate
+import com.omrilhn.readerapp.utils.showToast
 
 @Composable
 fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeViewModel = hiltViewModel()){
@@ -33,9 +39,22 @@ fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeVi
     val isStartedReading = homeViewModel.isStartedReading
     val isFinishedReading = homeViewModel.isFinishedReading
     val ratingVal = remember{ mutableIntStateOf(0) }
+    val changedNotes = book.notes != notesText.value //If these 2 variables are not same -> true - you can update
+    val changedRating = book.rating?.toInt() != ratingVal.value
+    val isFinishedTimestamp = if (isFinishedReading) Timestamp.now() else book.finishedReading
+    val isStartedTimestamp = if(isStartedReading) Timestamp.now() else book.startedReading
+    val context = LocalContext.current
 
-    SimpleForm(defaultValue = if(book.notes.toString().isNotEmpty()) book.notes.toString()
-    else "No thoughts available."){note->
+    val bookUpdate = changedNotes || changedNotes || isStartedReading || isFinishedReading
+
+    //hashMap K value must be same with the values in Firestore DB -> Book collections element
+    val bookToUpdate = hashMapOf(
+        "finished_reading_at" to isFinishedTimestamp,
+        "started_reading_at" to isStartedTimestamp,
+        "rating" to ratingVal.intValue,
+        "notes" to notesText.value).toMap() //turn into a HashMap with toMap func
+
+    SimpleForm(defaultValue = book.notes.toString().ifEmpty { "No thoughts available." }){ note->
         notesText.value = note
     }
     Row(modifier = Modifier.padding(4.dp),
@@ -43,7 +62,7 @@ fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeVi
         horizontalArrangement = Arrangement.Start){
         TextButton(enabled = book.startedReading == null,
             onClick = {
-
+                homeViewModel.setIsReadingStarted()
             }) {
             if (book.startedReading == null) {
                 if(!isStartedReading){
@@ -54,8 +73,7 @@ fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeVi
                     color = Color.Red.copy(alpha = 0.5f))
                 }
             }else{
-                //TODO:FORMAT DATE
-                Text(text = "started On: ${book.startedReading}")
+                Text(text = "Started On: ${formatDate(book.startedReading!!)}")
             }
         }
         Spacer(modifier = Modifier.width(4.dp))
@@ -71,7 +89,7 @@ fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeVi
                     Text(text = "Finished Reading!")
                 }}
             else{
-                Text(text = "Finished on: ${book.finishedReading}") //TODO: Format
+                Text(text = "Finished on: ${formatDate(book.finishedReading!!)}")
             }
         }
     }
@@ -83,11 +101,26 @@ fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeVi
         }
     }
     Spacer(modifier = Modifier.padding(bottom = 15.dp))
-    Row(horizontalArrangement = Arrangement.SpaceBetween){
-        RoundedButton(
-            label = "Update"
-        )
-        RoundedButton(label = "Delete")
+    Row{
+        RoundedButton(label = "Update"){
+            if(bookUpdate){
+                FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(book.id!!)
+                    .update(bookToUpdate)
+                    .addOnCompleteListener{task->
+                        Log.d("FB","ShowSimpleForm: ${task.result.toString()}")
+                        showToast(context,"Book Updated Succesfully!")
+                        navController.navigate(Screen.HomeScreen.route)
+                    }.addOnFailureListener {
+                        Log.w("FB","Error updating document",it)
+                    }
+            }
+        }
+        Spacer(modifier = Modifier.width(100.dp))
+        RoundedButton(label = "Delete"){
+
+        }
     }
 
 }
