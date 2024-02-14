@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @Composable
 fun UpdateScreen(navController: NavController,bookItemId:String,
                  viewModel:HomeViewModel = hiltViewModel()){
+    val listOfBooks = viewModel.listOfBooks.collectAsState()
 
     Scaffold(topBar = { ReaderAppBar(title = "Update Book",
         icon = Icons.Default.ArrowBack,
@@ -44,7 +46,7 @@ fun UpdateScreen(navController: NavController,bookItemId:String,
                 Boolean,
                 Exception>>(initialValue = DataOrException(data = emptyList(),
                 true,Exception(""))){
-                    value = viewModel.data.value
+                    value = viewModel.listOfBooks.value
         }.value
 
         Surface(modifier = Modifier
@@ -54,7 +56,7 @@ fun UpdateScreen(navController: NavController,bookItemId:String,
             Column(modifier = Modifier.padding(top = 3.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally){
-                Log.d("INFO","UpdateScreen ${viewModel.data.value.data.toString()}")
+                Log.d("INFO","UpdateScreen ${listOfBooks.value.data.toString()}")
 
                 if(bookInfo.loading == true){
                     LinearProgressIndicator()
@@ -66,11 +68,11 @@ fun UpdateScreen(navController: NavController,bookItemId:String,
                         .fillMaxWidth(),
                         shape = CircleShape,
                         shadowElevation = 4.dp){
-                            ShowBookUpdate(bookInfo = viewModel.data.value,
+                            ShowBookUpdate(bookInfo = listOfBooks.value,
                                 bookItemId = bookItemId)
                     }
                     //book parameter -> Obtained Data from Firestore DB -> viewModel.data.value
-                    ShowSimpleForm(book = viewModel.data.value.data?.first { mBook->
+                    ShowSimpleForm(book = listOfBooks.value.data?.first { mBook->
                         mBook.googleBookId == bookItemId
                     }!!, navController = navController )
                 }

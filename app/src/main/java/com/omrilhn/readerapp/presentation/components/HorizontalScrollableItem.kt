@@ -11,6 +11,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -18,25 +19,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omrilhn.readerapp.core.domain.models.DataOrException
 import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.presentation.home.HomeViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun HorizontalScrollableItem(listOfBooks:List<com.omrilhn.readerapp.data.model.MBook>,
-                             viewModel:HomeViewModel = hiltViewModel()  ,
+fun HorizontalScrollableItem(listOfBooks:DataOrException<List<MBook>,Boolean,Exception>,
+                             viewModel:HomeViewModel = hiltViewModel(),
                              onCardPressed:(String)->Unit){
     val scrollState = rememberScrollState()
-
+//    val listOfBooks = viewModel.listOfBooks.collectAsState()
 
     Row(modifier = Modifier
         .fillMaxWidth()
         .heightIn(280.dp)
         .horizontalScroll(scrollState) ){
-        if(viewModel.data.value.loading == true){
+        if(listOfBooks.loading == true){
             LinearProgressIndicator()
         }else{
             Log.d("TEST","viewModel data loading == false ")
-            if(listOfBooks.isNullOrEmpty()){
+            if(listOfBooks.data.isNullOrEmpty()){
                 Log.d("TEST", listOfBooks.toString())
                 Surface(modifier = Modifier.padding(20.dp)) {
                     Text(text = "No books found. Add a book",
@@ -48,9 +51,9 @@ fun HorizontalScrollableItem(listOfBooks:List<com.omrilhn.readerapp.data.model.M
                     )
                 }
             }else{
-                Log.d("TEST","listOfBooks: ${listOfBooks.isNullOrEmpty()}")
+                Log.d("TEST","listOfBooks: ${listOfBooks.data.isNullOrEmpty()}")
 
-                for(book in listOfBooks){
+                for(book in listOfBooks.data!!){
                     ListCard(book){
                         //OnCardPressed -> show details
                         onCardPressed(book.googleBookId.toString())

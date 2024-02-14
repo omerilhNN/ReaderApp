@@ -37,8 +37,8 @@ class HomeViewModel @Inject constructor(
     // ***************************************
 
 
-     val data: MutableState<DataOrException<List<MBook>,Boolean,Exception>>
-        = mutableStateOf(DataOrException(listOf(),true,Exception("")))
+//     val data: MutableState<DataOrException<List<MBook>,Boolean,Exception>>
+//        = mutableStateOf(DataOrException(listOf(),true,Exception("")))
 
     init{
         getAllBooksFromDatabase()
@@ -46,17 +46,16 @@ class HomeViewModel @Inject constructor(
 
     private fun getAllBooksFromDatabase() {
         viewModelScope.launch {
-            data.value.loading = true
-            data.value = repository.getAllBooksFromDatabase()
-            if(!data.value.data.isNullOrEmpty()) {
-                updateListOfBooks(data.value.data!!)
-                data.value.loading = false
+            _listOfBooks.value.loading = true
+            _listOfBooks.value = repository.getAllBooksFromDatabase()
+            if(!_listOfBooks.value.data.isNullOrEmpty()) {
+                _listOfBooks.value.loading = false
             }else {
                 updateListOfBooks(emptyList())
-                data.value.loading = false
+                _listOfBooks.value.loading = false
             }
         }
-        Log.d("GET","getAllBooksFromDatabase: ${data.value.data?.toList().toString()}")
+        Log.d("GET","getAllBooksFromDatabase: ${_listOfBooks.value.data?.toList().toString()}")
     }
     fun updateListOfBooks(books:List<MBook>){
         _listOfBooks.update {currentState->

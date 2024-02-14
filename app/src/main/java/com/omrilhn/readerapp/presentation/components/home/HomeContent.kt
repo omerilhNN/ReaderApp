@@ -40,7 +40,7 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
 
     // if data inside viewModel's books ->  initialize "listOfBooks" with it
     if(!listOfBooks.value.data.isNullOrEmpty()){
-         val _listOfBooks = viewModel.data.value.data!!.toList().filter {mBook->
+         val _listOfBooks = listOfBooks.value.data!!.toList().filter {mBook->
             mBook.userId == currentUser?.uid.toString()
         }
         viewModel.updateListOfBooks(_listOfBooks)
@@ -81,13 +81,13 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
 
         }
         Column(modifier = Modifier.fillMaxSize().padding(start=2.dp,end = 2.dp)){
-            listOfBooks.value.data?.let {
-                ReadingRightNowArea(listOfBooks = it, navController = navController) }
+
+                ReadingRightNowArea( navController = navController)
 
             TitleSection(label = "Reading List")
 
-            listOfBooks.value.data?.let {//if data is not null -> execute that block of code
-                BookListArea(listOfBooks = it , navController =navController) }
+            //if data is not null -> execute that block of code
+                BookListArea( navController =navController)
         }
 
 
