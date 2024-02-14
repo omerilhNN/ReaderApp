@@ -56,44 +56,56 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
                 onPressDetails.invoke(book.title.toString()) } //use invoke in order to make code READABLE
     ){
         Column(modifier = Modifier.width(screenWidth.dp - (spacing * 2 )),
-            horizontalAlignment = Alignment.Start){
-            Row(horizontalArrangement = Arrangement.Center){
-                Image(painter = rememberAsyncImagePainter(book.photoUrl.toString())
-                    ,contentDescription = "BookLogo"
-                    ,modifier = Modifier
+            horizontalAlignment = Alignment.Start) {
+            Row(horizontalArrangement = Arrangement.Center) {
+                Image(
+                    painter = rememberAsyncImagePainter(book.photoUrl.toString()),
+                    contentDescription = "BookLogo",
+                    modifier = Modifier
                         .height(110.dp)
                         .width(85.dp)
-                        .padding(4.dp))
+                        .padding(4.dp)
+                )
 
                 Spacer(modifier = Modifier.width(50.dp))
 
-                Column(modifier = Modifier.padding(top = 20.dp),
+                Column(
+                    modifier = Modifier.padding(top = 20.dp),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-                    Icon(imageVector = Icons.Rounded.FavoriteBorder, contentDescription ="Fav icon" ,
+                    Icon(
+                        imageVector = Icons.Rounded.FavoriteBorder, contentDescription = "Fav icon",
                         modifier = Modifier.padding(bottom = 1.dp)
-                        )
+                    )
                     BookRating(score = book.rating!!)
                 }
             }
-            Text(text = book.title.toString(), modifier = Modifier.padding(2.dp),
+            Text(
+                text = book.title.toString(), modifier = Modifier.padding(2.dp),
                 fontWeight = FontWeight.Bold,
-                maxLines = 2 ,
-                overflow = TextOverflow.Ellipsis)
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
 
-            Text(text = book.authors.toString() ,modifier = Modifier.padding(2.dp),
-                style = MaterialTheme.typography.caption)
+            Text(
+                text = book.authors.toString(), modifier = Modifier.padding(2.dp),
+                style = MaterialTheme.typography.caption
+            )
+        }
 
             val isStartedReading = remember {
                 mutableStateOf(false)
             }
             Row(horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.Bottom){
+
                 isStartedReading.value = book.startedReading != null
+
                 RoundedButton(label = if (isStartedReading.value)"Reading" else "Not yet",radius = 70)
             }
-        }
+
 
 
     }

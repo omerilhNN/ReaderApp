@@ -1,24 +1,18 @@
 package com.omrilhn.readerapp.navigation
 
-import android.widget.SearchView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import coil.ImageLoader
 import com.omrilhn.readerapp.presentation.details.BookDetailsScreen
 import com.omrilhn.readerapp.presentation.home.HomeScreen
 import com.omrilhn.readerapp.presentation.home.HomeViewModel
-import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.presentation.login.LoginScreen
 import com.omrilhn.readerapp.presentation.login.LoginViewModel
 import com.omrilhn.readerapp.presentation.register.RegisterScreen
@@ -74,7 +68,7 @@ fun Navigation(
             )
         }
         composable(Screen.StatsScreen.route){
-            StatsScreen(navController = navController)
+            StatsScreen(navController = navController,viewModel = homeViewModel )
         }
         composable(Screen.SearchScreen.route){
             SearchScreen(navController = navController,searchViewModel)

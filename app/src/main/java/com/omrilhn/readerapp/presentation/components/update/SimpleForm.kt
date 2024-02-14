@@ -24,16 +24,16 @@ import com.omrilhn.readerapp.presentation.home.HomeViewModel
 @Composable
 fun SimpleForm(modifier:Modifier = Modifier,
                loading:Boolean = false,
+               text:String ,
                homeViewModel: HomeViewModel = hiltViewModel(),
                defaultValue: String = "Great Book!",
                onSearch: (String)-> Unit
                ){
-    val textFieldValue = homeViewModel.thoughtText.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val valid = remember(textFieldValue.value){textFieldValue.value.trim().isNotEmpty() }
+    val valid = remember(text){text.trim().isNotEmpty() }
 
-    StandardInputField(text = textFieldValue.value,
+    StandardInputField(text = text,
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp)
@@ -45,7 +45,7 @@ fun SimpleForm(modifier:Modifier = Modifier,
         enabled = true,
         onAction = KeyboardActions{
             if(!valid)return@KeyboardActions
-            onSearch(textFieldValue.value.trim())
+            onSearch(text.trim())
             keyboardController?.hide()
         },
         onValueChange = {

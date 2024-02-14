@@ -39,14 +39,12 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
     val listOfBooks = viewModel.listOfBooks.collectAsState()
 
     // if data inside viewModel's books ->  initialize "listOfBooks" with it
-    if(!viewModel.data.value.data.isNullOrEmpty()){
-         listOfBooks.value.data = viewModel.data.value.data!!.toList().filter {mBook->
+    if(!listOfBooks.value.data.isNullOrEmpty()){
+         val _listOfBooks = viewModel.data.value.data!!.toList().filter {mBook->
             mBook.userId == currentUser?.uid.toString()
         }
-        if(!listOfBooks.value.data.isNullOrEmpty())
-            viewModel.updateListOfBooks(listOfBooks.value.data!!)
-        else Log.d("BOOK","Book list is empty ")
-    }
+        viewModel.updateListOfBooks(_listOfBooks)
+    }else {Log.d("BOOK HomeContent","List of books empty!!!")}
 
     val email = FirebaseAuth.getInstance().currentUser?.email
     val currentUserName = if(!email.isNullOrEmpty())
@@ -89,7 +87,7 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
             TitleSection(label = "Reading List")
 
             listOfBooks.value.data?.let {//if data is not null -> execute that block of code
-                BookListArea(listOfBooks = it, navController =navController) }
+                BookListArea(listOfBooks = it , navController =navController) }
         }
 
 

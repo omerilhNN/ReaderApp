@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class HomeViewModel @Inject constructor(
     // ***************************************
 
 
-    val data: MutableState<DataOrException<List<MBook>,Boolean,Exception>>
+     val data: MutableState<DataOrException<List<MBook>,Boolean,Exception>>
         = mutableStateOf(DataOrException(listOf(),true,Exception("")))
 
     init{
@@ -47,12 +48,20 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             data.value.loading = true
             data.value = repository.getAllBooksFromDatabase()
-            if(!data.value.data.isNullOrEmpty()) data.value.loading = false
+            if(!data.value.data.isNullOrEmpty()) {
+                updateListOfBooks(data.value.data!!)
+                data.value.loading = false
+            }else {
+                updateListOfBooks(emptyList())
+                data.value.loading = false
+            }
         }
         Log.d("GET","getAllBooksFromDatabase: ${data.value.data?.toList().toString()}")
     }
     fun updateListOfBooks(books:List<MBook>){
-        _listOfBooks.value.data = books
+        _listOfBooks.update {currentState->
+            currentState.copy(data = books)
+        }
     }
     fun setThoughtText(thought:String){
         _thoughtText.value = thought

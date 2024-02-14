@@ -9,6 +9,7 @@ import com.omrilhn.readerapp.presentation.components.HorizontalScrollableItem
 
 @Composable
 fun ReadingRightNowArea(listOfBooks:List<com.omrilhn.readerapp.data.model.MBook>, navController: NavController){
+    //Filter books by reading now.
     val readingNowList = listOfBooks.filter { mBook->
         mBook.startedReading != null && mBook.finishedReading ==null
     }
