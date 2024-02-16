@@ -152,11 +152,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(SpaceMedium))
             Button(
                 onClick = {
-                    loginViewModel.signInWithEmailAndPassword(emailText.value.text,passwordText.value.text)
+                    loginViewModel.signInWithEmailAndPassword(emailText.value.text,passwordText.value.text,context = context)
                     onLoginClick()
                 }
                 ,
                 modifier = Modifier
+                    .height(50.dp)
                     .align(Alignment.End)
             ) {
                 Text(
@@ -181,7 +182,7 @@ fun LoginScreen(
                     append(signUpText)
                 }
             },
-            style = MaterialTheme.typography.bodySmall,
+            style = androidx.compose.material.MaterialTheme.typography.body1,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .clickable {

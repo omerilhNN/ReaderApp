@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun RoundedButton(
     label:String = "Reading",
-    radius:Int = 0,
+    radius:Int = 29,
     onPress: ()-> Unit = {}
 ){
     Surface(modifier = Modifier.clip(RoundedCornerShape(

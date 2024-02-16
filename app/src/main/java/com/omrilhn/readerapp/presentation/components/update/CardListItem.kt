@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,20 +34,35 @@ fun CardListItem(book:MBook,
             bottom = 8.dp
         )
         .clip(RoundedCornerShape(20.dp))
-        .clickable {onPressDetails() }, elevation = CardDefaults.cardElevation(8.dp)){
+        .clickable { onPressDetails() },
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)){
 
         Row(horizontalArrangement = Arrangement.Start){
             Image(painter = rememberAsyncImagePainter(model = book.photoUrl.toString()),
                 contentDescription = null,
-                modifier = Modifier.height(100.dp).width(120.dp).padding(4.dp)
-                    .clip(RoundedCornerShape(topStart = 120.dp,topEnd = 20.dp,bottomEnd=0.dp,bottomStart=0.dp)))
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(120.dp)
+                    .padding(4.dp)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 120.dp,
+                            topEnd = 20.dp,
+                            bottomEnd = 0.dp,
+                            bottomStart = 0.dp
+                        )
+                    ))
             Column(){
                 Text(text = book.title.toString(),
                     style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(start = 8.dp,end = 8.dp).width(120.dp),
+                    modifier = Modifier
+                        .padding(start = 8.dp, end = 8.dp)
+                        .width(120.dp),
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis)
+
                 Text(text = book.authors.toString(),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(start = 8.dp,

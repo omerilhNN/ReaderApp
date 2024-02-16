@@ -49,8 +49,8 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
             .padding(16.dp)
-            .height(280.dp)
-            .width(220.dp)
+            .height(240.dp)
+            .width(200.dp)
             .clickable {
                 Log.d("LISTCARD","LIST CARD CLICKED")
                 onPressDetails.invoke(book.title.toString()) } //use invoke in order to make code READABLE
@@ -62,8 +62,8 @@ fun ListCard(book: com.omrilhn.readerapp.data.model.MBook,
                     painter = rememberAsyncImagePainter(book.photoUrl.toString()),
                     contentDescription = "BookLogo",
                     modifier = Modifier
-                        .height(110.dp)
-                        .width(85.dp)
+                        .height(140.dp)
+                        .width(100.dp)
                         .padding(4.dp)
                 )
 

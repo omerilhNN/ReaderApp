@@ -1,6 +1,5 @@
 package com.omrilhn.readerapp.presentation.register
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,24 +18,25 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omrilhn.readerapp.R
-import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.StandardInputField
-import com.omrilhn.readerapp.presentation.login.LoginEvent
 import com.omrilhn.readerapp.ui.theme.SpaceLarge
 import com.omrilhn.readerapp.ui.theme.SpaceMedium
 import com.omrilhn.readerapp.utils.AuthError
@@ -50,6 +50,7 @@ fun RegisterScreen(
     val emailState = viewModel.emailState.collectAsState()
     val passwordState = viewModel.passwordState.collectAsState()
     val registerState = viewModel.registerState.collectAsState()
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -58,23 +59,41 @@ fun RegisterScreen(
                 start = SpaceMedium,
                 end = SpaceMedium,
                 top = SpaceLarge,
-                bottom = 50.dp
+                bottom = 20.dp
             )
     ){
         Column(verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(SpaceMedium)
-                .align(Alignment.Center)) {
+                ) {
+            Spacer(modifier = Modifier.height(45.dp))
+
             Image(painter = painterResource(id = R.drawable.booklogo),
                 contentDescription = "Book logo",
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(CenterHorizontally)
                     .height(100.dp)
                     .width(100.dp),
             )
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+//            Row(horizontalArrangement = Arrangement.Center){
+                Text(text = "Create an Account",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(4.dp),
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+            Text(text = stringResource(id = R.string.create_acct),
+                modifier = Modifier.padding(4.dp),
+                textAlign = TextAlign.Start)
+//            }
+
+
+
+            Spacer(modifier = Modifier.height(10.dp))
 
                 StandardInputField(
                     text = emailState.value.text,
@@ -88,6 +107,7 @@ fun RegisterScreen(
                     },
                     hint = stringResource(id = R.string.login_hint),
                     label = stringResource(id = R.string.email)
+
                 )
 
 
@@ -111,26 +131,20 @@ fun RegisterScreen(
                     }
                 )
 
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-//            CheckBoxComponent(value = stringResource(id = R.string.terms_and_conditionsTR),
-//                onTextSelected = {
-//                    EventifyAppRouter.navigateTo(Screen.TermsAndConditionsScreen)
-//                })
             Spacer(modifier = Modifier.height(25.dp))
 
             Button(modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(0.5f),
+                .fillMaxWidth(0.5f).height(50.dp),
                 onClick = {
                     onRegisterClick()
-                    viewModel.createWithEmailAndPassword(emailState.value.text,passwordState.value.text)
+                    viewModel.createWithEmailAndPassword(emailState.value.text,passwordState.value.text,context = context)
                 },enabled = true
             ) {
                 Text(
                     text = stringResource(id = R.string.signUp),
-                    color = MaterialTheme.colors.onBackground
+                    color = Color.White,
+                    fontSize = 16.sp
                 )
             }
             if(registerState.value.isLoading) {
@@ -139,17 +153,21 @@ fun RegisterScreen(
                 )
             }
 
-            Column (verticalArrangement = Arrangement.Bottom){Text(
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom,
+                modifier = Modifier.fillMaxSize()){
+                Text(
                 text = buildAnnotatedString {
                     append(stringResource(id = R.string.already_have_an_account))
                     append(" ")
-                    val signUpText = stringResource(id = R.string.login)
+                    val loginText = stringResource(id = R.string.login)
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary
                         )
                     ) {
-                        append(signUpText)
+                        append(loginText)
                     }
                 },
                 style = MaterialTheme.typography.body1,
