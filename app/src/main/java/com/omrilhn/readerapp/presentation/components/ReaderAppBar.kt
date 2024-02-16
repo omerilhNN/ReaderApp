@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,18 +49,19 @@ fun ReaderAppBar(
         title = {
                 Row(verticalAlignment = Alignment.CenterVertically ){
                     if(showProfile){
-                        Image(painter = painterResource(id = R.drawable.booklogo),
+                        Image(imageVector = Icons.Filled.Book,
                             contentDescription = "Logo icon",
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
-                                .scale(0.5f))
+                                .scale(0.9f)
+                                )
                     }
                     if(icon != null){//If there is an icon show clickable BACK icon
                         Icon(imageVector = icon,contentDescription = "Arrow back",
                             tint = Color.Red.copy(0.7f),
                             modifier = Modifier.clickable { onBackArrowClicked.invoke() })
                     }
-                    Spacer(modifier = Modifier.weight(0.7f))
+                    Spacer(modifier = Modifier.width(40.dp))
 
                     //Text part which comes after BACK ARROW Icon.
                     Text(text = title,
@@ -81,7 +83,7 @@ fun ReaderAppBar(
                   }){
                       if(showProfile) Row(){
                           Icon(imageVector = Icons.Filled.Logout, contentDescription = "Logout",
-                              tint = Color.Green.copy(alpha = 0.4f))
+                              tint = Color.Green.copy(alpha = 0.8f))
 
                       }
                       else{

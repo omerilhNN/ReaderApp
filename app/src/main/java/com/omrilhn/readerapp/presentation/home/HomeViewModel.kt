@@ -2,6 +2,7 @@ package com.omrilhn.readerapp.presentation.home
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,9 +10,12 @@ import com.omrilhn.readerapp.core.domain.models.DataOrException
 import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.data.repository.FireRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +31,10 @@ class HomeViewModel @Inject constructor(
     private val _thoughtText = MutableStateFlow<String>("")
     val thoughtText:StateFlow<String> get() = _thoughtText.asStateFlow()
 
+    private val _refreshEvent = MutableSharedFlow<Unit>()
+    val refreshEvent: Flow<Unit> = _refreshEvent
+    private val _isRefreshing = mutableStateOf(false)
+    val isRefreshing: State<Boolean> = _isRefreshing
     //VALUES FOR UPDATE SCREEN -> Manage both screens VM
     //***************************************
     private val _isStartedReading = mutableStateOf(false)
@@ -44,7 +52,8 @@ class HomeViewModel @Inject constructor(
         getAllBooksFromDatabase()
     }
 
-    private fun getAllBooksFromDatabase() {
+
+    internal fun getAllBooksFromDatabase() {
         viewModelScope.launch {
             _listOfBooks.value.loading = true
             _listOfBooks.value = repository.getAllBooksFromDatabase()
@@ -54,6 +63,8 @@ class HomeViewModel @Inject constructor(
                 updateListOfBooks(emptyList())
                 _listOfBooks.value.loading = false
             }
+            _isRefreshing.value = false
+
         }
         Log.d("GET","getAllBooksFromDatabase: ${_listOfBooks.value.data?.toList().toString()}")
     }
@@ -70,5 +81,8 @@ class HomeViewModel @Inject constructor(
     }
     fun setIsReadingStarted(){
         _isStartedReading.value = !_isStartedReading.value
+    }
+    fun setIsRefreshing(value:Boolean){
+        _isRefreshing.value = value
     }
 }

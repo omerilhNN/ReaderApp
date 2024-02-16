@@ -101,6 +101,9 @@ dependencies {
     //Coil
     implementation ("io.coil-kt:coil-compose:2.4.0")
 
+    //SwipeToRefresh
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
+
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     //JSON Converter
