@@ -1,13 +1,18 @@
 package com.omrilhn.readerapp.presentation.login
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
+import android.util.Patterns
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -18,8 +23,10 @@ import com.omrilhn.readerapp.core.domain.use_case.LoginUseCase
 import com.omrilhn.readerapp.data.model.LoginResult
 import com.omrilhn.readerapp.data.model.MUser
 import com.omrilhn.readerapp.navigation.Screen
+import com.omrilhn.readerapp.utils.Constants
 import com.omrilhn.readerapp.utils.Resource
 import com.omrilhn.readerapp.utils.UiEvent
+import com.omrilhn.readerapp.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,7 +69,11 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
     private val _validInput = mutableStateOf(
         emailTextState.value.text.trim().isNotEmpty() && passwordTextState.value.text.trim().isNotEmpty())
     val validInput: State<Boolean> = _validInput
-    fun signInWithEmailAndPassword(email:String, password:String, home: (() -> Unit)? = null)
+    fun signInWithEmailAndPassword(
+        email:String,
+        password:String,
+        context: Context,
+        home: (() -> Unit)? = null)
             =viewModelScope.launch{
         try{
             auth.signInWithEmailAndPassword(email,password)
@@ -71,14 +82,25 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                         Log.d("FB","signInWithEmailAndPassword RESULT : ${task.result.toString()}")
                         _loginState.value = loginState.value.copy(result = Resource.Success(Unit))
                         home?.invoke()
-                    }else{
-                        _loginState.value = loginState.value.copy(result = Resource.Error("ERROR! signing in"))
-                        Log.d("FB","signInWithEmailAndPassword RESUL: ${task.result.toString()}")
+                    }else
+                    {
+                        when(task.exception){
+                            is FirebaseAuthInvalidUserException -> {
+                                showToast(context, "Invalid user")
+                            }
+                            is FirebaseAuthInvalidCredentialsException -> {
+                                showToast(context, "Invalid email or password")
+                            }
+                            else -> {
+                                showToast(context, "Authentication failed: ${task.exception?.message}")
+                            }
+                        }
                     }
                 }
         }catch(e:Exception){
             Log.d("FB","signInWithEmailAndPassword Exception : ${e.localizedMessage}")
             _loginState.value = loginState.value.copy(result = Resource.Error("EXCEPTION while signing"))
+
         }
     }
 
@@ -96,6 +118,9 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
         _loginState.update {currentState->
             currentState.copy(isPasswordVisible = !loginState.value.isPasswordVisible)
         }
+    }
+    private fun isValidEmail(email: String):Boolean{
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
     //TODO: COMMAND DESIGN PATTERN WILL BE IMPLEMENTED
 
