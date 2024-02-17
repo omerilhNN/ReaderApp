@@ -42,6 +42,7 @@ import com.omrilhn.readerapp.presentation.home.HomeViewModel
 fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltViewModel()){
     val currentUser = FirebaseAuth.getInstance().currentUser
     val listOfBooks = viewModel.listOfBooks.collectAsState()
+    val addedBooks = viewModel.addedBooks.collectAsState()
     val isRefreshing = viewModel.isRefreshing
 
 
@@ -101,7 +102,6 @@ fun HomeContent(navController: NavController, viewModel: HomeViewModel = hiltVie
 
                     TitleSection(label = "Reading List")
 
-                    //if data is not null -> execute that block of code
                     BookListArea( navController =navController)
                 }
 

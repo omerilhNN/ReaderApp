@@ -27,6 +27,15 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _listOfBooks = MutableStateFlow<DataOrException<List<MBook>,Boolean,Exception>>(DataOrException())
     val listOfBooks: StateFlow<DataOrException<List<MBook>,Boolean,Exception>> get() = _listOfBooks.asStateFlow()
+    private val _addedBooks = MutableStateFlow<DataOrException<List<MBook>,Boolean,Exception>>(
+      DataOrException(
+            data = listOfBooks.value.data?.filter {
+                it.startedReading == null && it.finishedReading == null
+            } ?: emptyList(),
+        loading = listOfBooks.value.loading,
+        Exception("")
+    ))
+    val addedBooks:StateFlow<DataOrException<List<MBook>,Boolean,Exception>> get() =_addedBooks
 
     private val _thoughtText = MutableStateFlow<String>("")
     val thoughtText:StateFlow<String> get() = _thoughtText.asStateFlow()
@@ -73,6 +82,13 @@ class HomeViewModel @Inject constructor(
             currentState.copy(data = books)
         }
     }
+    fun updateAddedBooks(){
+        _addedBooks.update {
+            it.copy(data =_listOfBooks.value.data?.filter {
+                it.startedReading == null && it.finishedReading == null
+            }, loading = _listOfBooks.value.loading,e = java.lang.Exception(""))
+        }
+    }
     fun setThoughtText(thought:String){
         _thoughtText.value = thought
     }
@@ -85,4 +101,7 @@ class HomeViewModel @Inject constructor(
     fun setIsRefreshing(value:Boolean){
         _isRefreshing.value = value
     }
+
+
+
 }

@@ -12,17 +12,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omrilhn.readerapp.presentation.components.ReaderAppBar
 import com.omrilhn.readerapp.presentation.components.search.BookList
 import com.omrilhn.readerapp.presentation.components.search.SearchForm
+import com.omrilhn.readerapp.utils.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(navController: NavController,
                  searchViewModel: SearchViewModel = hiltViewModel()){
+    val context = LocalContext.current
     Scaffold(topBar = {
         ReaderAppBar(title = "Search books",
             navController = navController,
@@ -40,7 +43,9 @@ fun SearchScreen(navController: NavController,
                         .padding(16.dp),
                     searchViewModel = searchViewModel
                 ){searchQuery->
-                    searchViewModel.searchBooks(query = searchQuery)
+                    searchViewModel.searchBooks(query = searchQuery){
+                        showToast(context = context,"Book informations empty!")
+                    }
 
                 }
                 Spacer(modifier = Modifier.weight(0.2f)) //Spacing between the items of column

@@ -33,13 +33,14 @@ fun BookList(navController: NavController,searchViewModel:SearchViewModel){
         }
     }else{
         Log.d("BOO","Book list: ${searchBookState.value.listOfBooks}")
-    }
-    LazyColumn(modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
-    ){
-       items(searchBookState.value.listOfBooks){ book->
-           BookRow(book = book, navController = navController)
+        LazyColumn(modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ){
+            items(searchBookState.value.listOfBooks){ book->
+                BookRow(book = book, navController = navController)
 
-       }
+            }
+        }
     }
+
 }

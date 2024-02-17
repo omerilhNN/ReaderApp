@@ -20,6 +20,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,21 +39,35 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.omrilhn.readerapp.core.domain.models.DataOrException
 import com.omrilhn.readerapp.data.model.Item
 import com.omrilhn.readerapp.data.model.MBook
 import com.omrilhn.readerapp.navigation.Screen
 import com.omrilhn.readerapp.presentation.components.RoundedButton
+import com.omrilhn.readerapp.presentation.home.HomeViewModel
 import com.omrilhn.readerapp.utils.Resource
 
 @Composable
 fun ShowBookDetails(bookInfo: Resource<Item>,
                     navController: NavController,
-                    bookDetailsViewModel: BookDetailsViewModel = hiltViewModel()){
+                    bookDetailsViewModel: BookDetailsViewModel = hiltViewModel(),
+                    homeViewModel: HomeViewModel = hiltViewModel()){
     val bookData = bookInfo.data?.volumeInfo
     val googleBookId = bookInfo.data?.id
-    val cleanDescription = HtmlCompat.fromHtml(bookData!!.description,
-        HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
 
+    val cleanDescription = if(!bookData!!.description.isNullOrEmpty()) HtmlCompat.fromHtml(
+        bookData.description,
+        HtmlCompat.FROM_HTML_MODE_LEGACY).toString() else "No description available"
+
+    /// Null check on texts that comes from Google Api ********
+    val authorsText = if (!bookData.authors.isNullOrEmpty()) bookData.authors.joinToString() else "No author information available"
+    val pageCountText = if (!bookData.pageCount.toString().isNullOrEmpty()) bookData.pageCount else "No page count available."
+    val categoriesText = if (!bookData.categories.isNullOrEmpty()) bookData.categories.joinToString() else "No categories available."
+    val descriptionText = if(!bookData.description.isNullOrEmpty()) bookData.description.toString() else "No description available."
+    val photoUrl = if (!bookData.imageLinks.thumbnail.isNullOrEmpty()) bookData.imageLinks.thumbnail else "http://books.google.com/books/content?id=kyylDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    val publishedDateText = if (bookData.publishedDate.isNullOrEmpty()) "Published date information not available" else bookData.publishedDate
+    val titleText = if (!bookData.title.isNullOrEmpty()) bookData.title.toString() else "No title available"
+    /// ************
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .padding(3.dp),
@@ -73,7 +88,7 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                         .padding(2.dp))
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally){
-                Text(text = bookData.title.toString(),
+                Text(text = titleText,
                     style = MaterialTheme.typography.h6,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 20)
@@ -81,19 +96,19 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Authors: ")
                     }
-                    append(bookData.authors.toString())
+                    append(authorsText.toString())
                 })
                 Text(text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Page count: ")
                     }
-                    append(bookData.pageCount.toString())
+                    append(pageCountText.toString())
                 })
                 Text(text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Categories: ")
                     }
-                    append(bookData.categories.toString())
+                    append(categoriesText.toString())
                 },
                     style = MaterialTheme.typography.subtitle1,
                     maxLines = 3,
@@ -102,7 +117,7 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Published: ")
                     }
-                    append(bookData.publishedDate.toString())
+                    append(publishedDateText.toString())
                 },
                     style = MaterialTheme.typography.subtitle1)
                 Spacer(modifier = Modifier.padding(5.dp))
@@ -118,14 +133,14 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                     RoundedButton(label = "Save"){
                         //OnClick-> save this book to the Firebase DB
                         val book = MBook(
-                            title = bookData.title,
-                            authors = bookData.authors.toString(),
-                            description = bookData.description,
-                            categories = bookData.categories.toString(),
+                            title = titleText,
+                            authors = authorsText,
+                            description = descriptionText,
+                            categories = categoriesText,
                             notes = "",
-                            photoUrl = bookData.imageLinks.thumbnail,
-                            publishedDate = bookData.publishedDate,
-                            pageCount = bookData.pageCount.toString(),
+                            photoUrl = photoUrl,
+                            publishedDate = publishedDateText,
+                            pageCount = pageCountText.toString(),
                             rating = 0.0,
                             googleBookId = googleBookId,
                             userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -133,8 +148,11 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                         )
                         bookDetailsViewModel.saveToFirestore(book){
                             //onNavigate lambda fun parameter assigned
+                            homeViewModel.getAllBooksFromDatabase()
                             navController.popBackStack()
                         }
+
+
                     }
                     Spacer(modifier = Modifier.width(25.dp))
                     RoundedButton(label = "Back"){
@@ -142,13 +160,6 @@ fun ShowBookDetails(bookInfo: Resource<Item>,
                     }
                 }
             }
-
-
-
         }
-
-
-
-
     }
 }

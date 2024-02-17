@@ -1,11 +1,14 @@
 package com.omrilhn.readerapp.presentation.search
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omrilhn.readerapp.core.domain.states.StandardTextFieldState
 import com.omrilhn.readerapp.data.repository.BookRepository
 import com.omrilhn.readerapp.utils.Resource
+import com.omrilhn.readerapp.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,9 +40,12 @@ class SearchViewModel @Inject constructor(private val bookRepository: BookReposi
             currentState.copy(text = search)
         }
     }
-    fun searchBooks(query: String) {
+    fun searchBooks(query: String, showToast: () -> Unit = {} ) {
         viewModelScope.launch(Dispatchers.Default) {
-            if(query.isEmpty()) return@launch
+            if(query.isEmpty()){
+                showToast() //Assign that function inside the SearchScreen composable
+                return@launch
+            }
 
             try{
                 when(val response = bookRepository.getBooks(query)) {
@@ -49,10 +55,10 @@ class SearchViewModel @Inject constructor(private val bookRepository: BookReposi
                       _searchBookState.update { currentState->
                           currentState.copy(listOfBooks = response.data!!)
                       }
-                        if (_searchBookState.value.listOfBooks.isNotEmpty())
+                        if (!_searchBookState.value.listOfBooks.isNullOrEmpty())
                             _searchBookState.value.isLoading = false
                         else {
-                            //TODO: Show a toaster message there is no book named by that query
+                            showToast()
                             _searchBookState.value.isLoading = false
 
                         }

@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.omrilhn.readerapp.data.model.Item
@@ -120,21 +122,28 @@ fun StatsScreen(navController: NavController, viewModel: HomeViewModel = hiltVie
                 }
                 else {
                     Divider()
-                    LazyColumn(modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp)
-                    ){
-                        //Filter books by read ones
-                        val readBooks:List<MBook> = if(!listOfBooks.value.data.isNullOrEmpty()){
-                            listOfBooks.value.data!!.filter{ mBook->
-                                (mBook.userId == currentUser?.uid) && (mBook.finishedReading != null)
-                            }
-                        }else{ emptyList() }
-                        items(items = readBooks ){book->
-                            BookRowStats(book = book)
-                
-                        }
+                    SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing =viewModel.isRefreshing.value ),
+                        onRefresh = {
+                            viewModel.setIsRefreshing(true)
+                            viewModel.getAllBooksFromDatabase()
+                        }) {
+                        LazyColumn(modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp)
+                        ){
+                            //Filter books by read ones
+                            val readBooks:List<MBook> = if(!listOfBooks.value.data.isNullOrEmpty()){
+                                listOfBooks.value.data!!.filter{ mBook->
+                                    (mBook.userId == currentUser?.uid) && (mBook.finishedReading != null)
+                                }
+                            }else{ emptyList() }
+                            items(items = readBooks ){book->
+                                BookRowStats(book = book)
 
+                            }
+
+                        }
                     }
+
                 }
             }
         }
