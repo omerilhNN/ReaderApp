@@ -3,6 +3,8 @@ package com.omrilhn.readerapp.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.omrilhn.readerapp.core.domain.use_case.LoginUseCase
+import com.omrilhn.readerapp.core.domain.use_case.ValidateEmail
+import com.omrilhn.readerapp.core.domain.use_case.ValidatePassword
 import com.omrilhn.readerapp.data.repository.AuthRepository
 import com.omrilhn.readerapp.data.repository.FireRepository
 import dagger.Module
@@ -18,6 +20,16 @@ object AuthModule {
     @Singleton
     fun provideLoginUseCase(repository: AuthRepository): LoginUseCase {
         return LoginUseCase(repository)
+    }
+     @Provides
+    @Singleton
+    fun provideValidateEmail(): ValidateEmail {
+        return ValidateEmail()
+    }
+    @Provides
+    @Singleton
+    fun provideValidatePassword(): ValidatePassword {
+        return ValidatePassword()
     }
     @Provides
     @Singleton

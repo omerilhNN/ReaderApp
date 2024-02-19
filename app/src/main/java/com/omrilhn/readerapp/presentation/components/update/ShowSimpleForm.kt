@@ -133,6 +133,8 @@ fun ShowSimpleForm(book:MBook,navController: NavController,homeViewModel: HomeVi
                     .addOnCompleteListener{task->
                         if(task.isSuccessful){
                             openDialog.value = false
+                            book.startedReading = null
+                            book.finishedReading = null
                             navController.popBackStack()
                             navController.navigate(Screen.HomeScreen.route)
                         }

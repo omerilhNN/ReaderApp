@@ -120,10 +120,6 @@ fun LoginScreen(
                     loginViewModel.setEmailText(it)
                 },
                 keyboardType = KeyboardType.Email,
-                error = when (emailText.value.error) {
-                    is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
-                    else -> ""
-                },
                 hint = stringResource(id = R.string.login_hint),
                 label = stringResource(id = R.string.email)
             )
@@ -139,10 +135,6 @@ fun LoginScreen(
                 hint = stringResource(id = R.string.password_hint),
                 label = stringResource(id = R.string.password),
                 keyboardType = KeyboardType.Password,
-                error = when (passwordText.value.error) {
-                    is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
-                    else -> ""
-                },
                 isPasswordVisible = state.value.isPasswordVisible,
                 onPasswordToggleClick = {
                     loginViewModel.togglePassword()

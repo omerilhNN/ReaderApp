@@ -1,5 +1,7 @@
 package com.omrilhn.readerapp.presentation.register
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omrilhn.readerapp.R
+import com.omrilhn.readerapp.core.domain.states.RegistrationFormEvent
 import com.omrilhn.readerapp.presentation.components.StandardInputField
 import com.omrilhn.readerapp.ui.theme.SpaceLarge
 import com.omrilhn.readerapp.ui.theme.SpaceMedium
@@ -51,6 +55,19 @@ fun RegisterScreen(
     val passwordState = viewModel.passwordState.collectAsState()
     val registerState = viewModel.registerState.collectAsState()
     val context = LocalContext.current
+    LaunchedEffect(key1 = context) {
+        viewModel.validationEvents.collect { event ->
+            when (event) {
+                is RegisterViewModel.ValidationEvent.Success -> {
+                    Toast.makeText(
+                        context,
+                        "Registration successful",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -98,17 +115,20 @@ fun RegisterScreen(
                 StandardInputField(
                     text = emailState.value.text,
                     onValueChange = {
-                        viewModel.setEmailText(it)
+                        viewModel.onEvent(RegistrationFormEvent.EmailChanged(it))
                     },
                     keyboardType = KeyboardType.Email,
-                    error = when (emailState.value.error) {
-                        is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
-                        else -> ""
-                    },
                     hint = stringResource(id = R.string.login_hint),
                     label = stringResource(id = R.string.email)
 
                 )
+            if (emailState.value.error != null) {
+                Text(
+                    text = emailState.value.error.toString(),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -116,20 +136,23 @@ fun RegisterScreen(
                 StandardInputField(
                     text = passwordState.value.text,
                     onValueChange = {
-                        viewModel.setPasswordText(it)
+                        viewModel.onEvent(RegistrationFormEvent.PasswordChanged(it))
                     },
                     hint = stringResource(id = R.string.password_hint),
                     label = stringResource(id = R.string.password),
                     keyboardType = KeyboardType.Password,
-                    error = when (passwordState.value.error) {
-                        is AuthError.FieldEmpty -> stringResource(id = R.string.error_field_empty)
-                        else -> ""
-                    },
                     isPasswordVisible = passwordState.value.isPasswordVisible,
                     onPasswordToggleClick = {
                         viewModel.togglePassword()
                     }
                 )
+            if (passwordState.value.error != null) {
+                Text(
+                    text = passwordState.value.error.toString(),
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
 
             Spacer(modifier = Modifier.height(25.dp))
 
@@ -137,8 +160,9 @@ fun RegisterScreen(
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(0.5f).height(50.dp),
                 onClick = {
+                    viewModel.onEvent(RegistrationFormEvent.Submit)
+                    viewModel.createWithEmailAndPassword(emailState.value.text,passwordState.value.text)
                     onRegisterClick()
-                    viewModel.createWithEmailAndPassword(emailState.value.text,passwordState.value.text,context = context)
                 },enabled = true
             ) {
                 Text(
