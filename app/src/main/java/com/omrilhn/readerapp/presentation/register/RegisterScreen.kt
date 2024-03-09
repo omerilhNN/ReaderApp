@@ -1,13 +1,10 @@
 package com.omrilhn.readerapp.presentation.register
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,8 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -39,11 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omrilhn.readerapp.R
-import com.omrilhn.readerapp.core.domain.states.RegistrationFormEvent
 import com.omrilhn.readerapp.presentation.components.StandardInputField
 import com.omrilhn.readerapp.ui.theme.SpaceLarge
 import com.omrilhn.readerapp.ui.theme.SpaceMedium
-import com.omrilhn.readerapp.utils.AuthError
 
 @Composable
 fun RegisterScreen(
@@ -54,18 +51,15 @@ fun RegisterScreen(
     val emailState = viewModel.emailState.collectAsState()
     val passwordState = viewModel.passwordState.collectAsState()
     val registerState = viewModel.registerState.collectAsState()
+    val emailErrorState = viewModel.emailErrorState.collectAsState()
+    val passwordErrorState = viewModel.passwordErrorState.collectAsState()
     val context = LocalContext.current
-    LaunchedEffect(key1 = context) {
-        viewModel.validationEvents.collect { event ->
-            when (event) {
-                is RegisterViewModel.ValidationEvent.Success -> {
-                    Toast.makeText(
-                        context,
-                        "Registration successful",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+
+    val registerButtonEnabled by remember {
+        derivedStateOf {
+            //Only checks if the end result condition which is down below is changed -> when using only a remember(condition) it will
+            //recompose everytime that value of the condition changes
+            emailErrorState.value == null && passwordErrorState.value == null
         }
     }
 
@@ -115,28 +109,34 @@ fun RegisterScreen(
                 StandardInputField(
                     text = emailState.value.text,
                     onValueChange = {
-                        viewModel.onEvent(RegistrationFormEvent.EmailChanged(it))
+                        viewModel.setEmailText(it)
+                        val emailValidate = viewModel.validateEmail(emailState.value.text)
+                        viewModel.setEmailError(emailValidate.errorMessage)
+
                     },
                     keyboardType = KeyboardType.Email,
                     hint = stringResource(id = R.string.login_hint),
                     label = stringResource(id = R.string.email)
 
                 )
-            if (emailState.value.error != null) {
+
+
+            if (emailState.value.text.isNotEmpty() && emailErrorState.value != null) {
                 Text(
-                    text = emailState.value.error.toString(),
-                    color = MaterialTheme.colors.error,
-                    modifier = Modifier.align(Alignment.End)
+                    text = emailErrorState.value!!, // !! güvenli olmayabilir, güvenli bir şekilde işlemek için kontrol edin
+                    color = MaterialTheme.colors.error
                 )
             }
 
-
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(35.dp))
 
                 StandardInputField(
                     text = passwordState.value.text,
                     onValueChange = {
-                        viewModel.onEvent(RegistrationFormEvent.PasswordChanged(it))
+                        viewModel.setPasswordText(it)
+                        val passwordValidate = viewModel.validatePassword(passwordState.value.text)
+                        viewModel.setPasswordError(passwordValidate.errorMessage)
+
                     },
                     hint = stringResource(id = R.string.password_hint),
                     label = stringResource(id = R.string.password),
@@ -146,12 +146,16 @@ fun RegisterScreen(
                         viewModel.togglePassword()
                     }
                 )
-            if (passwordState.value.error != null) {
+
+
+            if (passwordState.value.text.isNotEmpty() && passwordErrorState.value != null) {
                 Text(
-                    text = passwordState.value.error.toString(),
+                    text = passwordErrorState.value!!, // !! güvenli olmayabilir, güvenli bir şekilde işlemek için kontrol edin
                     color = MaterialTheme.colors.error,
                     modifier = Modifier.align(Alignment.End)
                 )
+            }else{ Text(text = "")
+
             }
 
             Spacer(modifier = Modifier.height(25.dp))
@@ -160,10 +164,10 @@ fun RegisterScreen(
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(0.5f).height(50.dp),
                 onClick = {
-                    viewModel.onEvent(RegistrationFormEvent.Submit)
-                    viewModel.createWithEmailAndPassword(emailState.value.text,passwordState.value.text)
                     onRegisterClick()
-                },enabled = true
+                    viewModel.createWithEmailAndPassword(emailState.value.text,passwordState.value.text)
+
+                },enabled = registerButtonEnabled
             ) {
                 Text(
                     text = stringResource(id = R.string.signUp),
